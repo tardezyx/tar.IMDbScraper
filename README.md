@@ -88,8 +88,8 @@ It is recommended to not scrape all information at once and it also does not mak
 ## Usage
 
 <ul>
-  <li>Just reference tar.IMDbScraper.dll</li>
-  <li>You also need to reference the <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a>.</li>
+  <li>ManuaL: reference tar.IMDbScraper.dll and the <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a></li>
+  <li>NuGet: use tar.IMDbScraper.1.0.0.nupkg</li>
   <li>In order to check the performance and the general progress you can use Scraper.ProgressLog or/and an event on Scraper.ProgressUpdate.</li>
   <li>See <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> for detailed usage.</li>
 </ul>

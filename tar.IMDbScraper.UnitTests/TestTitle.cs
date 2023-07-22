@@ -439,8 +439,8 @@ namespace tar.IMDbScraper.UnitTests {
       // It is recommended to not scrape all information at once and it also does not make any
       // sense to store everything in your own database which could not only be a legal issue
       // but is also immediately outdated as the IMDb data is updated regularly. Therefore, you
-      // should only scrape and store general information (e.g. titles, year(s), genres, plot)
-      // and scrape the other info when you really need it (e.g. to display it). This is also
+      // should only scrape and store general information (e.g. title(s), year(s), genre(s),
+      // plot(s)) and scrape the other info when you really need (to display) it. This is also
       // due to the duration a particular scrape needs (e.g. it takes already around 42 seconds
       // to scrape all 37 seasons of "The Simpsons" without detailed information of each episode).
       

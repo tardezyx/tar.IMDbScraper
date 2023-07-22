@@ -1,9 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <SignAssembly>False</SignAssembly>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>tar.IMDbScraper</Title>
+    <AssemblyVersion></AssemblyVersion>
+    <Version>1.00</Version>
+    <PackageProjectUrl>https://github.com/tardezyx/tar.IMDbScraper</PackageProjectUrl>
+    <Description>An IMDb scraper (AJAX, HTML, JSON)</Description>
+    <Authors>tar</Authors>
+    <Company />
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.48" />

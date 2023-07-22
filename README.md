@@ -7,8 +7,8 @@ This library can be used to scrape various IMDb title information:
 
 <details>
   <summary>via AJAX</summary>
-  - [X] all seasons
-  - [X] all user reviews
+- [X] all seasons
+- [X] all user reviews
 </details>
 <details>
   <summary>via HTML</summary>

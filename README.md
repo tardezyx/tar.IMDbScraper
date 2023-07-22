@@ -2,15 +2,6 @@
 
  - [X] C# .NET Standard v2.1
 
-## Usage
-
-<ul>
-  <li>Just reference the tar.IMDbScraper.dll.</li>
-  <li>You also need to reference the <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a>.</li>
-  <li>In order to check the performance and the general progress you can use Scraper.ProgressLog or/and an event on Scraper.ProgressUpdate.</li>
-  <li>See <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> for detailed usage.</li>
-</ul>
-
 ## Function
 
 This library can be used to scrape various IMDb title information via the static `Scraper` class:
@@ -93,3 +84,12 @@ This library can be used to scrape various IMDb title information via the static
 </details>
 
 It is recommended to not scrape all information at once and it also does not make any sense to store everything in your own database which could not only be a legal issue but is also immediately outdated as the IMDb data is updated regularly. Therefore, you should only scrape and store general information (e.g. title(s), year(s), genre(s), plot(s)) and scrape the other info when you really need (to display) it. This is also due to the duration a particular scrape needs (e.g. it takes already around 42 seconds to scrape all 37 seasons of "The Simpsons" without detailed information of each episode).
+
+## Usage
+
+<ul>
+  <li>Just reference tar.IMDbScraper.dll</li>
+  <li>You also need to reference the <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a>.</li>
+  <li>In order to check the performance and the general progress you can use Scraper.ProgressLog or/and an event on Scraper.ProgressUpdate.</li>
+  <li>See <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> for detailed usage.</li>
+</ul>

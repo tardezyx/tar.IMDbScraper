@@ -7,7 +7,7 @@
 <ul>
   <li>Just reference the tar.IMDbScraper.dll.</li>
   <li>You also need to reference the <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a>.</li>
-  <li>In order to check the performance and the general progress you can use `Scraper.ProgressLog` or/and an event on `Scraper.ProgressUpdate`.</li>
+  <li>In order to check the performance and the general progress you can use Scraper.ProgressLog or/and an event on Scraper.ProgressUpdate.</li>
   <li>See <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> for detailed usage.</li>
 </ul>
 
@@ -78,7 +78,7 @@ This library can be used to scrape various IMDb title information via the static
 ## Caution
 
 <details>
-  <summary>Some of the methods provide incomplete data:</summary>
+  <summary>Some of the methods provide incomplete data</summary>
   <ul>
     <li>As long as there is no "Show more"/"All" button on any of the loaded HTML pages, the info scraped should be complete. Otherwise the corresponding JSON method needs to be used. If there is no JSON method implemented yet, the author of this library needs to be informed about the affected title.</li>
     <li>The full credits page could be incomplete depending on the production status.</li>

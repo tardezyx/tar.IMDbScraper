@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>tar.IMDbScraper</Title>
     <AssemblyVersion></AssemblyVersion>
-    <Version>1.00</Version>
+    <Version>1.01</Version>
     <PackageProjectUrl>https://github.com/tardezyx/tar.IMDbScraper</PackageProjectUrl>
     <Description>An IMDb scraper (AJAX, HTML, JSON)</Description>
     <Authors>tar</Authors>

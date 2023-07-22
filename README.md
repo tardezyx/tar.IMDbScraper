@@ -79,7 +79,6 @@ This library can be used to scrape various IMDb title information via the static
     <li>The ratings page has a heatmap for all episode ratings which is not yet implemented.</li>
     <li>The reference page has (as the Main Page) some info which is incomplete.</li>
     <li>The storyline does provide some general plot entries but not all.</li>
-    <li>The `localizedTitle` in the JSON methods is currently not working. E.g. if you need the German title of a French production, you need to either use `Scraper.ScrapeAllAlternateTitlesAsync` (or `Scraper.ScrapeMainPageAsync` on an operating system with the German language activated).</li>
   </ul>
 </details>
 
@@ -88,7 +87,7 @@ It is recommended to not scrape all information at once and it also does not mak
 ## Usage
 
 <ul>
-  <li>ManuaL: reference tar.IMDbScraper.dll and the <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a></li>
+  <li>Manual: reference tar.IMDbScraper.dll and the <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a></li>
   <li>NuGet: use tar.IMDbScraper.1.0.0.nupkg</li>
   <li>In order to check the performance and the general progress you can use Scraper.ProgressLog or/and an event on Scraper.ProgressUpdate.</li>
   <li>See <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> for detailed usage.</li>

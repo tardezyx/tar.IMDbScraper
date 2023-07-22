@@ -93,7 +93,7 @@ namespace tar.IMDbScraper.Base {
           .Descendants("td")
           .FirstOrDefault(x => x.Attributes["class"]?
                                 .Value == "character")?
-          .Descendants("div")?
+          .Descendants("div")
           .FirstOrDefault()?
           .InnerText
           .Replace("\n", string.Empty)
@@ -267,10 +267,10 @@ namespace tar.IMDbScraper.Base {
       string?      id         = node?["id"]?.ToString();
       bool?        isWinner   = Helper.GetBool(node?["isWinner"]?.ToString());
       string?      name       = node?["award"]?["text"]?.ToString();
-      string?      textAsHtml = Helper.AdjustHTML(node?["award"]?["notes"]?["plaidHtml"]?.ToString());
       List<Person> persons    = _parsePersons(node?["awardedEntities"]?["secondaryAwardNames"]?.AsArray());
-      int?         year       = Helper.GetInt(node?["award"]?["eventEdition"]?["year"]?.ToString());
+      string?      textAsHtml = Helper.AdjustHTML(node?["award"]?["notes"]?["plaidHtml"]?.ToString());
       string?      url        = Helper.GetUrl(awardsEvents, IdCategory.AwardsEvent);
+      int?         year       = Helper.GetInt(node?["award"]?["eventEdition"]?["year"]?.ToString());
 
       if (id.HasText()) {
         return new Award() {
@@ -279,8 +279,8 @@ namespace tar.IMDbScraper.Base {
           ID       = id,
           IsWinner = isWinner,
           Name     = name,
-          Text     = Helper.GetTextViaHtmlText(textAsHtml),
           Persons  = persons,
+          Text     = Helper.GetTextViaHtmlText(textAsHtml),
           URL      = url.HasText() && year.HasValue
                    ? $"{url}/{year}"
                    : null,
@@ -426,9 +426,9 @@ namespace tar.IMDbScraper.Base {
       }
 
       string? id         = node?["id"]?.ToString();
-      int?    downVotes  = Helper.GetInt(node?["userVotingProps"]?["downVotes"]?.ToString());
+      int?    downVotes  = Helper.GetInt(node?["userVotingProps"]?["downVotes"]?.ToString().Replace(".", string.Empty));
       string? textAsHtml = Helper.AdjustHTML(node?["cardHtml"]?.ToString());
-      int?    upVotes    = Helper.GetInt(node?["userVotingProps"]?["upVotes"]?.ToString());
+      int?    upVotes    = Helper.GetInt(node?["userVotingProps"]?["upVotes"]?.ToString().Replace(".", string.Empty));
 
       if (id.HasText() || textAsHtml.HasText()) {
         return new CrazyCredit() {
@@ -637,8 +637,8 @@ namespace tar.IMDbScraper.Base {
         return null;
       }
 
-      int? upVotes    = Helper.GetInt(node?["usersInterested"]?.ToString());
-      int? totalVotes = Helper.GetInt(node?["usersVoted"]?.ToString());
+      int? upVotes    = Helper.GetInt(node?["usersInterested"]?.ToString().Replace(".", string.Empty));
+      int? totalVotes = Helper.GetInt(node?["usersVoted"]?.ToString().Replace(".", string.Empty));
 
       return Helper.GetInterestScore(upVotes, null, totalVotes);
     }
@@ -651,14 +651,14 @@ namespace tar.IMDbScraper.Base {
 
       string?        id            = node?["keyword"]?["id"]?.ToString();
       InterestScore? interestScore = _parseInterestScore(node?["interestScore"]);
-      string?        value         = node?["keyword"]?["text"]?["text"]?.ToString();
+      string?        text          = node?["keyword"]?["text"]?["text"]?.ToString();
 
-      if (id.HasText() || value.HasText() || interestScore != null) {
+      if (id.HasText() || text.HasText() || interestScore != null) {
         return new Keyword() {
           ID            = id,
           InterestScore = interestScore,
-          Text          = value,
-          URL           = Helper.GetUrl(value?.Replace(' ', '-'), IdCategory.Keyword)
+          Text          = text,
+          URL           = Helper.GetUrl(text?.Replace(' ', '-'), IdCategory.Keyword)
         };
       }
 
@@ -1733,10 +1733,10 @@ namespace tar.IMDbScraper.Base {
 
           foreach (JsonNode? nodeLocation in jsonArrayLocations.EmptyIfNull()) {
             string? address   = nodeLocation?["cardText"]?.ToString();
-            int?    downVotes = Helper.GetInt(nodeLocation?["userVotingProps"]?["downVotes"]?.ToString());
+            int?    downVotes = Helper.GetInt(nodeLocation?["userVotingProps"]?["downVotes"]?.ToString().Replace(".", string.Empty));
             string? id        = nodeLocation?["id"]?.ToString();
             string? note      = nodeLocation?["attributes"]?.ToString();
-            int?    upVotes   = Helper.GetInt(nodeLocation?["userVotingProps"]?["upVotes"]?.ToString());
+            int?    upVotes   = Helper.GetInt(nodeLocation?["userVotingProps"]?["upVotes"]?.ToString().Replace(".", string.Empty));
 
             List<string> notes = new List<string>();
             if (note.HasText()) {
@@ -2180,7 +2180,7 @@ namespace tar.IMDbScraper.Base {
 
       UserReview? userReview = null;
       foreach (JsonNode? node in nodeReviews.EmptyIfNull()) { 
-        int?      downVotes        = Helper.GetInt(node?["node"]?["helpfulness"]?["downVotes"]?.ToString());
+        int?      downVotes        = Helper.GetInt(node?["node"]?["helpfulness"]?["downVotes"]?.ToString().Replace(".", string.Empty));
         DateTime? reviewDate       = DateTime.Parse(node?["node"]?["submissionDate"]?.ToString(), CultureInfo.InvariantCulture);
         string?   reviewID         = node?["node"]?["id"]?.ToString();
         string?   reviewHeadline   = node?["node"]?["summary"]?["originalText"]?.ToString();
@@ -2188,7 +2188,7 @@ namespace tar.IMDbScraper.Base {
         string?   reviewTextAsHtml = node?["node"]?["text"]?["originalText"]?["plaidHtml"]?.ToString();
         string?   reviewUserID     = node?["node"]?["author"]?["userId"]?.ToString();
         string?   reviewUserName   = node?["node"]?["author"]?["nickName"]?.ToString();
-        int?      upVotes          = Helper.GetInt(node?["node"]?["helpfulness"]?["upVotes"]?.ToString());
+        int?      upVotes          = Helper.GetInt(node?["node"]?["helpfulness"]?["upVotes"]?.ToString().Replace(".", string.Empty));
 
         User? user = null;
         if (reviewUserID.HasText()) { 
@@ -3276,9 +3276,24 @@ namespace tar.IMDbScraper.Base {
         }
         
         if (name.HasText() || episodes.Count > 0) {
+          int? yearFrom = null;
+          int? yearTo   = null;
+          foreach (Episode episode in episodes) {
+            if (episode.ReleaseDate.HasValue) {
+              if (yearFrom == null || yearFrom > episode.ReleaseDate.Value.Year) {
+                yearFrom = episode.ReleaseDate.Value.Year;
+              }
+              if (yearTo == null || yearTo < episode.ReleaseDate.Value.Year) {
+                yearTo = episode.ReleaseDate.Value.Year;
+              }
+            }
+          }
+
           result.Add(new Season() {
             Episodes = episodes,
-            Name     = name
+            Name     = name,
+            YearFrom = yearFrom,
+            YearTo   = yearTo
           });
         }
 
@@ -3327,8 +3342,8 @@ namespace tar.IMDbScraper.Base {
     #region --- parse storyline -------------------------------------------------------------------
     internal static Storyline? ParseStoryline(List<JsonNode>? nodes) {
       Certification?    certification = null;
-      List<string>      genres        = new List<string>();
-      List<string>      keywords      = new List<string>();
+      List<Genre>       genres        = new List<Genre>();
+      List<Keyword>     keywords      = new List<Keyword>();
       List<PlotSummary> plotSummaries = new List<PlotSummary>();
       List<string>      taglines      = new List<string>();
 
@@ -3350,18 +3365,25 @@ namespace tar.IMDbScraper.Base {
         }
       
         if (path.Contains("genres")) {
-          string? genre = node?["text"]?.ToString();
+          string? genreID   = node?["id"]?.ToString();
+          string? genreName = node?["text"]?.ToString();
         
-          if (genre.HasText()) {
-            genres.Add(genre);
+          if (genreID.HasText() || genreName.HasText()) {
+            genres.Add(new Genre() {
+              ID   = genreID,
+              Name = genreName,
+            });
           }
         }
 
         if (path.Contains("storylineKeywords")) {
-          string? keyword = node?["text"]?.ToString();
+          string? keywordText = node?["text"]?.ToString();
 
-          if (keyword.HasText()) {
-            keywords.Add(keyword);
+          if (keywordText.HasText()) {
+            keywords.Add(new Keyword() {
+               Text = keywordText,
+               URL  = Helper.GetUrl(keywordText.Replace(' ', '-'), IdCategory.Keyword)
+            });
           }
         }
 
@@ -3632,6 +3654,7 @@ namespace tar.IMDbScraper.Base {
                 .InnerText
                 .Trim()
                 .GetSubstringBeforeString(" out of ")
+                .Replace(".", string.Empty)
           );
 
           int? totalVotes = Helper.GetInt(
@@ -3641,6 +3664,7 @@ namespace tar.IMDbScraper.Base {
                 .InnerText
                 .Trim()
                 .GetSubstringBetweenStrings(" out of ", " found this helpful.")
+                .Replace(".", string.Empty)
           );
 
           string? spoilerWarning = node

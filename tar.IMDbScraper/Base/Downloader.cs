@@ -266,11 +266,11 @@ namespace tar.IMDbScraper.Base {
           .Attributes["data-key"]?
           .Value;
 
-          if (newKey.IsNullOrEmpty() || newKey == key || (maxRequests > 0 && numberOfRequests >= maxRequests)) {
-            break;
-          }
+        if (newKey.IsNullOrEmpty() || newKey == key || (maxRequests > 0 && numberOfRequests >= maxRequests)) {
+          break;
+        }
 
-          key = newKey;
+        key = newKey;
 
         _progressUpdate(
           guid,

@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -13,6 +14,27 @@ namespace tar.IMDbScraper.Base {
   internal static class WebClient {
     private static HttpClient? _client { get; set; }
 
+    #region --- _get request ----------------------------------------------------------------------
+    private static HttpRequestMessage _getRequest(HttpMethod method, string url, string content) {
+      ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+      HttpRequestMessage result = new HttpRequestMessage(method, url);
+
+      result.Headers.Add("Accept",               "application/json");
+      result.Headers.Add("Accept-Language",      CultureInfo.CurrentCulture.Name);
+      result.Headers.Add("User-Agent",           "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0");
+      result.Headers.Add("x-imdb-client-name",   "imdb-web-next-localized");
+      result.Headers.Add("x-imdb-user-country",  CultureInfo.CurrentCulture.Name.GetSubstringAfterOccurrence('-', 1));
+      result.Headers.Add("x-imdb-user-language", CultureInfo.CurrentCulture.Name);
+
+      result.Content = new StringContent(
+        content,
+        Encoding.UTF8,
+        "application/json"
+      );
+
+      return result;
+    }
+    #endregion
     #region --- _get client -----------------------------------------------------------------------
     private static HttpClient _getClient() {
       if (_client == null) {
@@ -28,24 +50,27 @@ namespace tar.IMDbScraper.Base {
     #endregion
     #region --- _send via get --------------------------------------------------------- (async) ---
     private static async Task<string> _sendViaGetAsync(string url) {
-      HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
-      request.Headers.Add("Accept",          "application/json");
-      request.Headers.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
-      request.Headers.Add("User-Agent",      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0");
-      
-      request.Content = new StringContent(
-        string.Empty,
-        Encoding.UTF8,
-        "application/json"
+      HttpRequestMessage request = _getRequest(
+        HttpMethod.Get,
+        url,
+        string.Empty
       );
 
-      HttpResponseMessage response = await _getClient().SendAsync(request);
+      HttpResponseMessage response = await _getClient()
+        .SendAsync(request);
+
       if (!response.IsSuccessStatusCode) {
         return await _sendViaPostAsync(url);
       }
 
-      StreamReader reader = new StreamReader(await response.Content.ReadAsStreamAsync());
-      string result = await reader.ReadToEndAsync();
+      StreamReader reader = new StreamReader(
+        await response
+          .Content
+          .ReadAsStreamAsync()
+      );
+
+      string result = await reader
+        .ReadToEndAsync();
 
       if (result.Contains("\"message\":\"PersistedQueryNotFound\"")) {
         return await _sendViaPostAsync(url);
@@ -70,25 +95,27 @@ namespace tar.IMDbScraper.Base {
                        + "\"variables\":"       + variables                  + ","
                        + "\"extensions\":"      + extensions
                      + "}";
-      
-      HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, baseUrl);
-      request.Headers.Add("Accept",          "application/json");
-      request.Headers.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
-      request.Headers.Add("User-Agent",      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0");
-      
-      request.Content = new StringContent(
-        content,
-        Encoding.UTF8,
-        "application/json"
+
+      HttpRequestMessage request = _getRequest(
+        HttpMethod.Post,
+        baseUrl,
+        content
       );
 
-      HttpResponseMessage response = await _getClient().SendAsync(request);
+      HttpResponseMessage response = await _getClient()
+        .SendAsync(request);
+
       if (!response.IsSuccessStatusCode) {
         return string.Empty;
       }
 
-      StreamReader reader = new StreamReader(await response.Content.ReadAsStreamAsync());
-      return await reader.ReadToEndAsync();
+      StreamReader reader = new StreamReader(await response
+        .Content
+        .ReadAsStreamAsync()
+      );
+
+      return await reader
+        .ReadToEndAsync();
     }
     #endregion
 

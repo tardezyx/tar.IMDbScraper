@@ -7,54 +7,60 @@ This library can be used to scrape various IMDb title information:
 
 <details>
   <summary>via AJAX</summary>
-- [X] all seasons
-- [X] all user reviews
+  <ul>
+    <li>all seasons</li>
+    <li>all user reviews</li>
+  </ul>
 </details>
 <details>
   <summary>via HTML</summary>
-  - [X] alternate versions page
-  - [X] awards page
-  - [X] crazy credits page
-  - [X] critics reviews page
-  - [X] FAQ page
-  - [X] full credits page
-  - [X] locations page
-  - [X] main page
-  - [X] parental guide page
-  - [X] ratings page
-  - [X] reference page
-  - [X] soundtrack page
-  - [X] taglines page
-  - [X] technical page
+  <ul>
+  <li>alternate versions page</li>
+  <li>awards page</li>
+  <li>crazy credits page</li>
+  <li>critics reviews page</li>
+  <li>FAQ page</li>
+  <li>full credits page</li>
+  <li>locations page</li>
+  <li>main page</li>
+  <li>parental guide page</li>
+  <li>ratings page</li>
+  <li>reference page</li>
+  <li>soundtrack page</li>
+  <li>taglines page</li>
+  <li>technical page</li>
+  </ul>
 </details>
 <details>
   <summary>via JSON</summary>
-  - [X] all alternate titles ("Also known as" = AKAs)
-  - [X] all awards
-  - [X] all awards events
-  - [X] all companies
-  - [X] all connections
-  - [X] all external reviews
-  - [X] all external sites
-  - [X] all filming dates
-  - [X] all filming locations
-  - [X] all goofs
-  - [X] all keywords
-  - [X] all news
-  - [X] all plot summaries
-  - [X] all quotes
-  - [X] all release dates
-  - [X] all topics
-  - [X] all trivia entries
-  - [X] all awards for a particular awards event (via enum)
-  - [X] all awards for a particular awards event (via string)
-  - [X] all companies of a particular category (via enum)
-  - [X] all connections of a particular category (via enum)
-  - [X] episodes card (2 top ranked and 2 most recent episodes, if available)
-  - [X] external sites of a particular category (via enum)
-  - [X] goofs of a particular category (via enum)
-  - [X] main news (without details)
-  - [X] next episode (if available)
-  - [X] storyline
-  - [X] suggestions (search on IMDb)
+  <ul>
+  <li>all alternate titles ("Also known as" = AKAs)</li>
+  <li>all awards</li>
+  <li>all awards events</li>
+  <li>all companies</li>
+  <li>all connections</li>
+  <li>all external reviews</li>
+  <li>all external sites</li>
+  <li>all filming dates</li>
+  <li>all filming locations</li>
+  <li>all goofs</li>
+  <li>all keywords</li>
+  <li>all news</li>
+  <li>all plot summaries</li>
+  <li>all quotes</li>
+  <li>all release dates</li>
+  <li>all topics</li>
+  <li>all trivia entries</li>
+  <li>all awards for a particular awards event (via enum)</li>
+  <li>all awards for a particular awards event (via string)</li>
+  <li>all companies of a particular category (via enum)</li>
+  <li>all connections of a particular category (via enum)</li>
+  <li>episodes card (2 top ranked and 2 most recent episodes, if available)</li>
+  <li>external sites of a particular category (via enum)</li>
+  <li>goofs of a particular category (via enum)</li>
+  <li>main news (without details)</li>
+  <li>next episode (if available)</li>
+  <li>storyline</li>
+  <li>suggestions (search on IMDb)</li>
+  </ul>
 </details>

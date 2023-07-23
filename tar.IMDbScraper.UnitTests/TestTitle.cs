@@ -362,7 +362,7 @@ namespace tar.IMDbScraper.UnitTests {
       // movies
       //string imdbID = "tt0017136";  // metropolis
       //string imdbID = "tt0068646";  // the godfather
-      //string imdbID = "tt0078748";  // alien
+      string imdbID = "tt0078748";  // alien
       //string imdbID = "tt0108052";  // schindler's list
       //string imdbID = "tt0387564";  // saw
       //string imdbID = "tt0468569";  // the dark knight
@@ -375,7 +375,7 @@ namespace tar.IMDbScraper.UnitTests {
       //string imdbID = "tt0092400";  // married... with children
       //string imdbID = "tt0096697";  // the simpsons
       //string imdbID = "tt0898266";  // the big bang theory
-      string imdbID = "tt0944947";  // game of thrones
+      //string imdbID = "tt0944947";  // game of thrones
       //string imdbID = "tt4283088";  // game of thrones: s6e9
       //string imdbID = "tt6905756";  // der pass
       //string imdbID = "tt7587890";  // the rookie

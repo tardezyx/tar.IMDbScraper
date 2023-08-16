@@ -69,7 +69,7 @@ namespace tar.IMDbScraper.Base {
         return null;
       }
 
-      if (double.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out double result)) {
+      if (double.TryParse(input, NumberStyles.Any, CultureInfo.CurrentUICulture, out double result)) {
         return result;
       }
 
@@ -94,7 +94,7 @@ namespace tar.IMDbScraper.Base {
         return null;
       }
 
-      if (int.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out int result)) {
+      if (int.TryParse(input, NumberStyles.Any, CultureInfo.CurrentUICulture, out int result)) {
         return result;
       }
 
@@ -136,7 +136,7 @@ namespace tar.IMDbScraper.Base {
         return null;
       }
 
-      if (long.TryParse(input, out long result)) {
+      if (long.TryParse(input, NumberStyles.Any, CultureInfo.CurrentUICulture, out long result)) {
         return result;
       }
 

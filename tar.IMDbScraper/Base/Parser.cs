@@ -1404,6 +1404,13 @@ namespace tar.IMDbScraper.Base {
       List<FAQEntry> noSpoilers = new List<FAQEntry>();
       List<FAQEntry> spoilers   = new List<FAQEntry>();
 
+      // needs rework, new node:
+      HtmlNode? faqSection = htmlDocument?
+        .DocumentNode
+        .SelectSingleNode("//div[@data-testid=\"sub-section-faqs\"]");
+      // ... better to get json, if possible ...
+
+
       #region --- no spoilers ---------------------------------------------------------------------
       HtmlNode? nodeNoSpoilers = htmlDocument?
         .DocumentNode

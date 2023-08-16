@@ -7,6 +7,7 @@ using tar.IMDbScraper.Models;
 namespace tar.IMDbScraper.UnitTests {
   [TestClass]
   public class TestTitle {
+    #region --- all alternate titles --------------------------------------------------------------
     [TestMethod]
     public async Task AllAlternateTitles() {
       string imdbID = "tt0102926"; // The Silence of the Lambs (1991)
@@ -70,7 +71,8 @@ namespace tar.IMDbScraper.UnitTests {
         "Title is wrong."
       );
     }
-
+    #endregion
+    #region --- all awards events -----------------------------------------------------------------
     [TestMethod]
     public async Task AllAwardsEvents() {
       List<AwardsEvent> allAwardsEvents = await Scraper.ScrapeAllAwardsEventsAsync();
@@ -103,7 +105,8 @@ namespace tar.IMDbScraper.UnitTests {
         "URL is wrong."
       );
     }
-
+    #endregion
+    #region --- awards ----------------------------------------------------------------------------
     [TestMethod]
     public async Task Awards() {
       string imdbID = "tt0068646"; // the godfather
@@ -120,7 +123,7 @@ namespace tar.IMDbScraper.UnitTests {
         $"Awards events are {awardsEvents.Count} but should be at least 23!"
       );
 
-      List<Award> awards = new List<Award>();
+      List<Award> awards = new();
       foreach (AwardsEvent awardsEvent in awardsEvents) {
         awards.AddRange(
           await Scraper.ScrapeAwardsViaStringAsync(imdbID, awardsEvent.ID!)
@@ -137,7 +140,8 @@ namespace tar.IMDbScraper.UnitTests {
         $"Awards are {awardsEvents.Count} but should be at least 60!"
       );
     }
-
+    #endregion
+    #region --- filming dates ---------------------------------------------------------------------
     [TestMethod]
     public async Task FilmingDates() {
       string imdbID = "tt0944947"; // Game of Thrones (2011)
@@ -149,7 +153,8 @@ namespace tar.IMDbScraper.UnitTests {
         "Filming Dates not correctly scraped!"
       );
     }
-
+    #endregion
+    #region --- goofs -----------------------------------------------------------------------------
     [TestMethod]
     public async Task Goofs() {
       string imdbID = "tt0468569"; // The Dark Knight (2008)
@@ -211,7 +216,8 @@ namespace tar.IMDbScraper.UnitTests {
         $"Users voted for good is {goof.InterestScore?.UpVotes} but should be at least 45!"
       );
     }
-
+    #endregion
+    #region --- news ------------------------------------------------------------------------------
     [TestMethod]
     public async Task News() {
       string imdbID = "tt0092400"; // Married with Children (1987)
@@ -281,7 +287,8 @@ namespace tar.IMDbScraper.UnitTests {
         "News URL ist not set correctly!"
       );
     }
-
+    #endregion
+    #region --- suggestions -----------------------------------------------------------------------
     [TestMethod]
     public async Task Suggestions() {
       string input = "greml";
@@ -350,7 +357,8 @@ namespace tar.IMDbScraper.UnitTests {
         "Videos could not be scraped."
       );
     }
-
+    #endregion
+    #region --- whole title and debug -------------------------------------------------------------
     [TestMethod]
     public async Task WholeTitleAndDebug() {
       // the delegate Scraper.ProgessUpdate can be used to handle the updated progress info
@@ -362,8 +370,9 @@ namespace tar.IMDbScraper.UnitTests {
       // movies
       //string imdbID = "tt0017136";  // metropolis
       //string imdbID = "tt0068646";  // the godfather
-      string imdbID = "tt0078748";  // alien
+      //string imdbID = "tt0078748";  // alien
       //string imdbID = "tt0108052";  // schindler's list
+      //string imdbID = "tt0133093";  // the matrix
       //string imdbID = "tt0387564";  // saw
       //string imdbID = "tt0468569";  // the dark knight
       //string imdbID = "tt4154796";  // avengers: endgame
@@ -375,7 +384,7 @@ namespace tar.IMDbScraper.UnitTests {
       //string imdbID = "tt0092400";  // married... with children
       //string imdbID = "tt0096697";  // the simpsons
       //string imdbID = "tt0898266";  // the big bang theory
-      //string imdbID = "tt0944947";  // game of thrones
+      string imdbID = "tt0944947";  // game of thrones
       //string imdbID = "tt4283088";  // game of thrones: s6e9
       //string imdbID = "tt6905756";  // der pass
       //string imdbID = "tt7587890";  // the rookie
@@ -393,7 +402,7 @@ namespace tar.IMDbScraper.UnitTests {
       List<FilmingLocation> allFilmingLocations = await Scraper.ScrapeAllFilmingLocationsAsync(imdbID);
       Goofs?                allGoofs            = await Scraper.ScrapeAllGoofsAsync(imdbID);
       List<Keyword>         allKeywords         = await Scraper.ScrapeAllKeywordsAsync(imdbID);
-      List<PlotSummary>     allPlotSummaries    = await Scraper.ScrapeAllPlotSummariesAsync(imdbID);
+      List<PlotSummary>     allPlotSummaries    = await Scraper.ScrapeAllPlotSummariesAsync(imdbID); // check avengers: endgame
       List<Quote>           allQuotes           = await Scraper.ScrapeAllQuotesAsync(imdbID);
       List<ReleaseDate>     allReleaseDates     = await Scraper.ScrapeAllReleaseDatesAsync(imdbID);
       List<Season>          allSeasons          = await Scraper.ScrapeAllSeasonsAsync(imdbID);
@@ -460,5 +469,6 @@ namespace tar.IMDbScraper.UnitTests {
     private void Scraper_ProgressUpdate(ProgressLog progressLog) {
       // do something with the progress log
     }
+    #endregion
   }
 }

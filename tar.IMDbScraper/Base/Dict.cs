@@ -10,22 +10,22 @@ namespace tar.IMDbScraper.Base {
       { Operation.AlternateTitles,  "180f0f5df1b03c9ee78b1f410d65928ec22e7aca590e5321fbb6a6c39b802695" },
       { Operation.Awards,           "a39721be3e314646be4c44351cd6dcaede3e55ae4b58b623443f02d4caed7f48" },
       { Operation.CompanyCredits,   "ef3c062fb3a177f606d2734b42b876a929139eb6c86a582c177a95886a1a9a12" },
-      { Operation.Connections,      "4ebf8961c4bb7e95dbb859abc38e37e6fc6a9a0ff88c700bb5babceb97815c32" },
+      { Operation.Connections,      "e69d5a49208c458f04d11d1dca2e5188ef2e6b7e4e9a703c02c108d457d6e937" },
       { Operation.EpisodesCard,     "8b2a1dd89ac8fb20e357b28af4231de9629967a57623be11bd430f578559915d" },
       { Operation.ExternalReviews,  "226f42443bc502eb1a69dd3a532926d077d8fbd4142b89ac3dd67441e3bfdbd1" },
       { Operation.ExternalSites,    "d3e9a86d08e0df13fe3d13fd24360c278d8e8d30741f282d8b9df6484d507b07" },
       { Operation.FilmingDates,     "8ac6be7af362a34e89a287dbd41c3fe3386d25c5923237b3b2e0be0a471a805f" },
       { Operation.FilmingLocations, "5e1b7378425e70f1d8220f92e9be1d471bdbbab659274c32a895b2f3ffc51214" },
-      { Operation.Goofs,            "5f75c2d066983fd7e950461b7649983fe978bb1490ec5bd88f5746ebe0444491" },
+      { Operation.Goofs,            "2f270f1053579cc01a000743de99c57ea0f14b8563625c86b4e5b078e575c24c" },
       { Operation.Keywords,         "182e5ae91fea29ab8a47155a0170066beefcabe0a62f817c8af24886965faebe" },
       { Operation.MainNews,         "63872dfbd55617c857b2d4050b85127a441d313669c0d161e6a9f994e8e7a5fc" },
       { Operation.News,             "5e221ebe778bacd11825a5a6d79af171b0abff6509dca7b274bbf19b1d8750eb" },
       { Operation.NextEpisode,      "df63cd20172d532d83b912fc1ecf4e6a3e55f22c6dc610c08439aaa0c8ada56c" },
-      { Operation.PlotSummaries,    "de695a5f5bd026515b0dbed5cd23a5926aff7c69d128294d6e223b7487b3304f" },
+      { Operation.PlotSummaries,    "6e92fc52a9af406b4feb1ca4b284f9ef964a94d9fb57127122fc8f3873dcd88a" },
       { Operation.Quotes,           "55b997c5f9e11abdccb39e2e994a425c9f21ea100199d09ad29d97007784a135" },
       { Operation.ReleaseDates,     "5e101e432b7a0d78da43a53e6be2b7cc5309f34929fb67b7762a001eace8edb1" },
       { Operation.Storyline,        "ad739d75c0062966ebf299e3aedc010e17888355fde6d0eee417f30368f38c14" },
-      { Operation.Trivia,           "561871d0ce63008cbe3dd992354de5c86c8d5ed362ceb19f768220b52a648bf0" }
+      { Operation.Trivia,           "101651d4fef546dfc31d45f2bf864f588bf4951c8e4720de555d1aa2d9050df2" }
     };
     #endregion
     #region --- operation query base64 ------------------------------------------------------------

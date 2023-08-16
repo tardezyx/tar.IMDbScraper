@@ -99,7 +99,7 @@ namespace tar.IMDbScraper.Base {
     #region --- scrape all connections ------------------------------------------------ (async) ---
     /// <summary>
     /// Scrapes all connections an IMDb title has with other IMDb titles.
-    /// <br><b>Caution:</b> Requires at least 12 JSON requests in order to fill the category.</br>
+    /// <br><b>Caution:</b> Requires at least 13 JSON requests in order to fill the category.</br>
     /// </summary>
     /// <param name="imdbID">The ID of an IMDb title.</param>
     /// <returns>All IMDb title connections.</returns>
@@ -107,6 +107,7 @@ namespace tar.IMDbScraper.Base {
       List<Connection> connectionsEditedFrom   = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.EditedFrom);
       List<Connection> connectionsEditedInto   = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.EditedInto);
       List<Connection> connectionsFeaturedIn   = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.FeaturedIn);
+      List<Connection> connectionsFeatures     = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.Features);
       List<Connection> connectionsFollowedBy   = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.FollowedBy);
       List<Connection> connectionsFollows      = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.Follows);
       List<Connection> connectionsReferencedIn = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.ReferencedIn);
@@ -117,14 +118,16 @@ namespace tar.IMDbScraper.Base {
       List<Connection> connectionsSpinOffFrom  = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.SpinOffFrom);
       List<Connection> connectionsSpoofedIn    = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.SpoofedIn);
 
-      if ( connectionsEditedFrom.Count > 0 || connectionsEditedInto.Count  > 0 || connectionsFeaturedIn.Count   > 0
-        || connectionsFollowedBy.Count > 0 || connectionsFollows.Count     > 0 || connectionsReferencedIn.Count > 0
-        || connectionsReferences.Count > 0 || connectionsRemadeAs.Count    > 0 || connectionsRemakeOf.Count     > 0
-        || connectionsSpinOff.Count    > 0 || connectionsSpinOffFrom.Count > 0 || connectionsSpoofedIn.Count    > 0 ) {
+      if ( connectionsEditedFrom.Count   > 0 || connectionsEditedInto.Count > 0 || connectionsFeaturedIn.Count  > 0
+        || connectionsFeatures.Count     > 0 || connectionsFollowedBy.Count > 0 || connectionsFollows.Count     > 0
+        || connectionsReferencedIn.Count > 0 || connectionsReferences.Count > 0 || connectionsRemadeAs.Count    > 0
+        || connectionsRemakeOf.Count     > 0 || connectionsSpinOff.Count    > 0 || connectionsSpinOffFrom.Count > 0
+        || connectionsSpoofedIn.Count    > 0 ) {
         return new Connections() {
           EditedFrom   = connectionsEditedFrom,
           EditedInto   = connectionsEditedInto,
           FeaturedIn   = connectionsFeaturedIn,
+          Features     = connectionsFeatures,
           FollowedBy   = connectionsFollowedBy,
           Follows      = connectionsFollows,
           ReferencedIn = connectionsReferencedIn,

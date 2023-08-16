@@ -5,6 +5,7 @@ namespace tar.IMDbScraper.Models {
     public List<Connection> EditedFrom   { get; set; } = new List<Connection>();
     public List<Connection> EditedInto   { get; set; } = new List<Connection>();
     public List<Connection> FeaturedIn   { get; set; } = new List<Connection>();
+    public List<Connection> Features     { get; set; } = new List<Connection>();
     public List<Connection> FollowedBy   { get; set; } = new List<Connection>();
     public List<Connection> Follows      { get; set; } = new List<Connection>();
     public List<Connection> ReferencedIn { get; set; } = new List<Connection>();

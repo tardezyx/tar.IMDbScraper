@@ -5,6 +5,7 @@ namespace tar.IMDbScraper.Enums {
     [Description("edited_from")]   EditedFrom,
     [Description("edited_into")]   EditedInto,
     [Description("featured_in")]   FeaturedIn,
+    [Description("features")]      Features,
     [Description("followed_by")]   FollowedBy,
     [Description("follows")]       Follows,
     [Description("referenced_in")] ReferencedIn,

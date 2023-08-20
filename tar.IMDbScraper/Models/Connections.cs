@@ -15,5 +15,6 @@ namespace tar.IMDbScraper.Models {
     public List<Connection> SpinOff      { get; set; } = new List<Connection>();
     public List<Connection> SpinOffFrom  { get; set; } = new List<Connection>();
     public List<Connection> SpoofedIn    { get; set; } = new List<Connection>();
+    public List<Connection> VersionOf    { get; set; } = new List<Connection>();
   }
 }

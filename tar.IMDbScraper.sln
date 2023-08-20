@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tar.IMDbScraper", "tar.IMDbScraper\tar.IMDbScraper.csproj", "{0B5B32E2-B000-45E0-B22D-5D35D2CC3BDA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tar.IMDbScraper", "tar.IMDbScraper\tar.IMDbScraper.csproj", "{0B5B32E2-B000-45E0-B22D-5D35D2CC3BDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tar.IMDbScraper.UnitTests", "tar.IMDbScraper.UnitTests\tar.IMDbScraper.UnitTests.csproj", "{975759BB-FB19-412D-9BF7-1AB28B1E1559}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tar.IMDbScraper.UnitTests", "tar.IMDbScraper.UnitTests\tar.IMDbScraper.UnitTests.csproj", "{975759BB-FB19-412D-9BF7-1AB28B1E1559}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

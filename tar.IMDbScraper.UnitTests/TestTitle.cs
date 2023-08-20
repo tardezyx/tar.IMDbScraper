@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Text;
 using tar.IMDbScraper.Base;
 using tar.IMDbScraper.Enums;
 using tar.IMDbScraper.Models;
@@ -288,6 +289,11 @@ namespace tar.IMDbScraper.UnitTests {
       );
     }
     #endregion
+    #region --- scraper: progress update ----------------------------------------------------------
+    private void Scraper_ProgressUpdate(ProgressLog progressLog) {
+      // do something with the progress log
+    }
+    #endregion
     #region --- suggestions -----------------------------------------------------------------------
     [TestMethod]
     public async Task Suggestions() {
@@ -369,7 +375,7 @@ namespace tar.IMDbScraper.UnitTests {
 
       // movies
       //string imdbID = "tt0017136";  // metropolis
-      //string imdbID = "tt0068646";  // the godfather
+      string imdbID = "tt0068646";  // the godfather
       //string imdbID = "tt0078748";  // alien
       //string imdbID = "tt0108052";  // schindler's list
       //string imdbID = "tt0133093";  // the matrix
@@ -384,7 +390,7 @@ namespace tar.IMDbScraper.UnitTests {
       //string imdbID = "tt0092400";  // married... with children
       //string imdbID = "tt0096697";  // the simpsons
       //string imdbID = "tt0898266";  // the big bang theory
-      string imdbID = "tt0944947";  // game of thrones
+      //string imdbID = "tt0944947";  // game of thrones
       //string imdbID = "tt4283088";  // game of thrones: s6e9
       //string imdbID = "tt6905756";  // der pass
       //string imdbID = "tt7587890";  // the rookie
@@ -465,10 +471,35 @@ namespace tar.IMDbScraper.UnitTests {
 
       Debugger.Break();
     }
+    #endregion
+    #region --- z ... testing ---------------------------------------------------------------------
+    [TestMethod]
+    public async Task ZTesting() {
+      var allConnections = await Scraper.ScrapeAllConnectionsAsync("tt0679174");
 
-    private void Scraper_ProgressUpdate(ProgressLog progressLog) {
-      // do something with the progress log
+      StringBuilder sb = new();
+
+      if (allConnections != null) {
+        foreach (var item in allConnections.FeaturedIn) {
+          sb.AppendLine(
+            string.Format(
+              "{0}|{1} ({2}) {3} {4} {5}",
+              item.AssociatedTitle?.URL,
+              item.AssociatedTitle?.LocalizedTitle,
+              item.AssociatedTitle?.YearFrom,
+              item.AssociatedTitle?.Type,
+              item.AssociatedTitle?.Series?.LocalizedTitle,
+              item.Notes?.PlainText
+            )
+          );
+        }
+      }
+
+      string result = sb.ToString();
+
+      Debugger.Break();
     }
     #endregion
+
   }
 }

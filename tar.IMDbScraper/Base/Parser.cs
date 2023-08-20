@@ -386,13 +386,13 @@ namespace tar.IMDbScraper.Base {
       }
 
       AssociatedTitle? associatedTitle = _parseAssociatedTitle(node?["associatedTitle"]);
-      string?          notes           = node?["text"]?.ToString() ?? null;
+      string?          notesAsHtml = Helper.AdjustHTML(node?["description"]?["plaidHtml"]?.ToString());
 
-      if (associatedTitle != null || notes.HasText()) { 
+      if (associatedTitle != null) { 
         return new Connection() {
           AssociatedTitle = associatedTitle,
           Category        = categorieDescription.Replace('_', ' '),
-          Notes           = notes
+          Notes           = Helper.GetTextViaHtmlText(notesAsHtml),
         };
       }
 

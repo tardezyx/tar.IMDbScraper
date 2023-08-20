@@ -117,12 +117,13 @@ namespace tar.IMDbScraper.Base {
       List<Connection> connectionsSpinOff      = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.SpinOff);
       List<Connection> connectionsSpinOffFrom  = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.SpinOffFrom);
       List<Connection> connectionsSpoofedIn    = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.SpoofedIn);
+      List<Connection> connectionsVersionOf    = await ScrapeConnectionsAsync(imdbID, ConnectionsCategory.VersionOf);
 
       if ( connectionsEditedFrom.Count   > 0 || connectionsEditedInto.Count > 0 || connectionsFeaturedIn.Count  > 0
         || connectionsFeatures.Count     > 0 || connectionsFollowedBy.Count > 0 || connectionsFollows.Count     > 0
         || connectionsReferencedIn.Count > 0 || connectionsReferences.Count > 0 || connectionsRemadeAs.Count    > 0
         || connectionsRemakeOf.Count     > 0 || connectionsSpinOff.Count    > 0 || connectionsSpinOffFrom.Count > 0
-        || connectionsSpoofedIn.Count    > 0 ) {
+        || connectionsSpoofedIn.Count    > 0 || connectionsVersionOf.Count  > 0 ) {
         return new Connections() {
           EditedFrom   = connectionsEditedFrom,
           EditedInto   = connectionsEditedInto,
@@ -136,7 +137,8 @@ namespace tar.IMDbScraper.Base {
           RemakeOf     = connectionsRemakeOf,
           SpinOff      = connectionsSpinOff,
           SpinOffFrom  = connectionsSpinOffFrom,
-          SpoofedIn    = connectionsSpoofedIn
+          SpoofedIn    = connectionsSpoofedIn,
+          VersionOf    = connectionsVersionOf
         };
       }
 

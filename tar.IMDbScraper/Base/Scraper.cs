@@ -285,7 +285,7 @@ namespace tar.IMDbScraper.Base {
     #region --- scrape all connections ------------------------------------------------ (async) ---
     /// <summary>
     /// Scrapes all connections an IMDb title has with other IMDb titles.
-    /// <br><b>Caution:</b> Requires at least 13 JSON requests in order to fill the category.</br>
+    /// <br><b>Caution:</b> Requires at least 15 JSON requests in order to fill the category.</br>
     /// </summary>
     /// <param name="imdbID">The ID of an IMDb title.</param>
     /// <returns>All IMDb title connections.</returns>
@@ -293,7 +293,7 @@ namespace tar.IMDbScraper.Base {
       ProgressLog progressLog = StartProgress(
         imdbID,
         "All Connections",
-        14
+        15
       );
 
       Connections connectionsEditedFrom   = await ScrapeAllConnectionsSubAsync(progressLog, imdbID, ConnectionsCategory.EditedFrom);
@@ -309,13 +309,14 @@ namespace tar.IMDbScraper.Base {
       Connections connectionsSpinOff      = await ScrapeAllConnectionsSubAsync(progressLog, imdbID, ConnectionsCategory.SpinOff);
       Connections connectionsSpinOffFrom  = await ScrapeAllConnectionsSubAsync(progressLog, imdbID, ConnectionsCategory.SpinOffFrom);
       Connections connectionsSpoofedIn    = await ScrapeAllConnectionsSubAsync(progressLog, imdbID, ConnectionsCategory.SpoofedIn);
+      Connections connectionsSpoofs       = await ScrapeAllConnectionsSubAsync(progressLog, imdbID, ConnectionsCategory.Spoofs);
       Connections connectionsVersionOf    = await ScrapeAllConnectionsSubAsync(progressLog, imdbID, ConnectionsCategory.VersionOf);
 
       if ( connectionsEditedFrom.Count   > 0 || connectionsEditedInto.Count > 0 || connectionsFeaturedIn.Count  > 0
         || connectionsFeatures.Count     > 0 || connectionsFollowedBy.Count > 0 || connectionsFollows.Count     > 0
         || connectionsReferencedIn.Count > 0 || connectionsReferences.Count > 0 || connectionsRemadeAs.Count    > 0
         || connectionsRemakeOf.Count     > 0 || connectionsSpinOff.Count    > 0 || connectionsSpinOffFrom.Count > 0
-        || connectionsSpoofedIn.Count    > 0 || connectionsVersionOf.Count  > 0 ) {
+        || connectionsSpoofedIn.Count    > 0 || connectionsSpoofs.Count     > 0 || connectionsVersionOf.Count   > 0 ) {
         return new AllConnections() {
           EditedFrom   = connectionsEditedFrom,
           EditedInto   = connectionsEditedInto,
@@ -330,6 +331,7 @@ namespace tar.IMDbScraper.Base {
           SpinOff      = connectionsSpinOff,
           SpinOffFrom  = connectionsSpinOffFrom,
           SpoofedIn    = connectionsSpoofedIn,
+          Spoofs       = connectionsSpoofs,
           VersionOf    = connectionsVersionOf
         };
       }

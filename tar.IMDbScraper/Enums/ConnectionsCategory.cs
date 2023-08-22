@@ -15,6 +15,7 @@ namespace tar.IMDbScraper.Enums {
     [Description("spin_off")]      SpinOff,
     [Description("spin_off_from")] SpinOffFrom,
     [Description("spoofed_in")]    SpoofedIn,
+    [Description("spoofs")]        Spoofs,
     [Description("version_of")]    VersionOf
   }                  
 }

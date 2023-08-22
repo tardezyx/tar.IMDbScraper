@@ -13,6 +13,7 @@
     public Connections SpinOff      { get; set; } = new Connections();
     public Connections SpinOffFrom  { get; set; } = new Connections();
     public Connections SpoofedIn    { get; set; } = new Connections();
+    public Connections Spoofs       { get; set; } = new Connections();
     public Connections VersionOf    { get; set; } = new Connections();
   }
 }

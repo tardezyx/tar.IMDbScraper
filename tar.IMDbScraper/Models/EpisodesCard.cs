@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace tar.IMDbScraper.Models {
+﻿namespace tar.IMDbScraper.Models {
   public class EpisodesCard {
-    public List<Episode>? TopRated   { get; set; }
-    public List<Episode>? MostRecent { get; set; }
+    public Episodes TopRated   { get; set; } = new Episodes();
+    public Episodes MostRecent { get; set; } = new Episodes();
   }
 }

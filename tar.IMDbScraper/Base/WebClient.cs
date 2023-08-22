@@ -12,10 +12,12 @@ using tar.IMDbScraper.Extensions;
 
 namespace tar.IMDbScraper.Base {
   internal static class WebClient {
-    private static HttpClient? _client { get; set; }
+    #region --- fields ----------------------------------------------------------------------------
+    private static HttpClient? _client;
+    #endregion
 
-    #region --- _get request ----------------------------------------------------------------------
-    private static HttpRequestMessage _getRequest(HttpMethod method, string url, string content) {
+    #region --- get request -----------------------------------------------------------------------
+    private static HttpRequestMessage GetRequest(HttpMethod method, string url, string content) {
       ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
       HttpRequestMessage result = new HttpRequestMessage(method, url);
 
@@ -35,8 +37,8 @@ namespace tar.IMDbScraper.Base {
       return result;
     }
     #endregion
-    #region --- _get client -----------------------------------------------------------------------
-    private static HttpClient _getClient() {
+    #region --- get client ------------------------------------------------------------------------
+    private static HttpClient GetClient() {
       if (_client == null) {
         _client = new HttpClient();
         _client
@@ -48,19 +50,19 @@ namespace tar.IMDbScraper.Base {
       return _client;
     }
     #endregion
-    #region --- _send via get --------------------------------------------------------- (async) ---
-    private static async Task<string> _sendViaGetAsync(string url) {
-      HttpRequestMessage request = _getRequest(
+    #region --- send via get ---------------------------------------------------------- (async) ---
+    private static async Task<string> SendViaGetAsync(string url) {
+      HttpRequestMessage request = GetRequest(
         HttpMethod.Get,
         url,
         string.Empty
       );
 
-      HttpResponseMessage response = await _getClient()
+      HttpResponseMessage response = await GetClient()
         .SendAsync(request);
 
       if (!response.IsSuccessStatusCode) {
-        return await _sendViaPostAsync(url);
+        return await SendViaPostAsync(url);
       }
 
       StreamReader reader = new StreamReader(
@@ -73,14 +75,14 @@ namespace tar.IMDbScraper.Base {
         .ReadToEndAsync();
 
       if (result.Contains("\"message\":\"PersistedQueryNotFound\"")) {
-        return await _sendViaPostAsync(url);
+        return await SendViaPostAsync(url);
       }
       
       return result;
     }
     #endregion
-    #region --- _send via post -------------------------------------------------------- (async) ---
-    private static async Task<string> _sendViaPostAsync(string url) {
+    #region --- send via post --------------------------------------------------------- (async) ---
+    private static async Task<string> SendViaPostAsync(string url) {
       string baseUrl       = url.GetSubstringBeforeOccurrence('?', 1);
       string extensions    = url.GetSubstringAfterString("extensions=");
       string operationName = url.GetSubstringAfterString("operationName=").GetSubstringBeforeOccurrence('&', 1);
@@ -96,13 +98,13 @@ namespace tar.IMDbScraper.Base {
                        + "\"extensions\":"      + extensions
                      + "}";
 
-      HttpRequestMessage request = _getRequest(
+      HttpRequestMessage request = GetRequest(
         HttpMethod.Post,
         baseUrl,
         content
       );
 
-      HttpResponseMessage response = await _getClient()
+      HttpResponseMessage response = await GetClient()
         .SendAsync(request);
 
       if (!response.IsSuccessStatusCode) {
@@ -121,7 +123,7 @@ namespace tar.IMDbScraper.Base {
 
     #region --- get html -------------------------------------------------------------- (async) ---
     internal static async Task<HtmlDocument?> GetHTMLAsync(string url) {
-      string content = await _sendViaGetAsync(url);
+      string content = await SendViaGetAsync(url);
 
       if (string.IsNullOrEmpty(content)) {
         return null;
@@ -135,7 +137,7 @@ namespace tar.IMDbScraper.Base {
     #endregion
     #region --- get json -------------------------------------------------------------- (async) ---
     internal static async Task<JsonNode?> GetJSONAsync(string url) {
-      string content = await _sendViaGetAsync(url);
+      string content = await SendViaGetAsync(url);
 
       if (string.IsNullOrEmpty(content)) {
         return null;

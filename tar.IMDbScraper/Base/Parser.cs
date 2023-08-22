@@ -10,8 +10,8 @@ using tar.IMDbScraper.Models;
 
 namespace tar.IMDbScraper.Base {
   internal static class Parser {
-    #region --- _add company to company credits list ----------------------------------------------
-    private static void _addCompanyToCompanyCreditsList(List<Company> companies, Company company) {
+    #region --- add company to company credits list -----------------------------------------------
+    private static void AddCompanyToCompanyCreditsList(List<Company> companies, Company company) {
       Company existing = companies.FirstOrDefault(x => x.ID == company.ID);
 
       if (existing == null) {
@@ -21,8 +21,8 @@ namespace tar.IMDbScraper.Base {
       }
     }
     #endregion
-    #region --- _add person to credits list -------------------------------------------------------
-    private static void _addPersonToCreditsList(List<Person> persons, Person person) {
+    #region --- add person to credits list --------------------------------------------------------
+    private static void AddPersonToCreditsList(List<Person> persons, Person person) {
       Person existing = persons.FirstOrDefault(x => x.ID == person.ID);
 
       if (existing == null) {
@@ -35,8 +35,8 @@ namespace tar.IMDbScraper.Base {
       }
     }
     #endregion
-    #region --- _get content data from html script ------------------------------------------------
-    private static JsonNode? _getContentDataFromHTMLScript(HtmlDocument? htmlDocument) {
+    #region --- get content data from html script -------------------------------------------------
+    private static JsonNode? GetContentDataFromHTMLScript(HtmlDocument? htmlDocument) {
       if (htmlDocument == null) {
         return null;
       }
@@ -55,8 +55,8 @@ namespace tar.IMDbScraper.Base {
         : null;
     }
     #endregion    
-    #region --- _parse actor ----------------------------------------------------------------------
-    private static Person _parseActor(HtmlNode node) {
+    #region --- parse actor -----------------------------------------------------------------------
+    private static Person ParseActor(HtmlNode node) {
       string? imageURL = Helper.GetImageURL(
         node
         .Descendants("img")
@@ -168,15 +168,15 @@ namespace tar.IMDbScraper.Base {
       };
     }
     #endregion
-    #region --- _parse alternate title ------------------------------------------------------------
-    private static AlternateTitle? _parseAlternateTitle(JsonNode? node) {
+    #region --- parse alternate title -------------------------------------------------------------
+    private static AlternateTitle? ParseAlternateTitle(JsonNode? node) {
       if (node == null) {
         return null;
       }
 
-      Country?     country  = _parseCountry(node?["country"]);
-      Language?    language = _parseLanguage(node?["language"]);
-      List<string> notes    = _parseArrayFieldToStringList(node?["displayableProperty"]?["qualifiersInMarkdownList"]?.AsArray(), "plainText");
+      Country?     country  = ParseCountry(node?["country"]);
+      Language?    language = ParseLanguage(node?["language"]);
+      List<string> notes    = ParseArrayFieldToStringList(node?["displayableProperty"]?["qualifiersInMarkdownList"]?.AsArray(), "plainText");
       string?      title    = node?["displayableProperty"]?["value"]?["plainText"]?.ToString();
 
       if (title.HasText()) {
@@ -191,8 +191,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse alternate version ----------------------------------------------------------
-    private static AlternateVersion? _parseAlternateVersion(JsonNode? node) {
+    #region --- parse alternate version -----------------------------------------------------------
+    private static AlternateVersion? ParseAlternateVersion(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -210,8 +210,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse array field to string list -------------------------------------------------
-    private static List<string> _parseArrayFieldToStringList(JsonArray? nodeArray, string field) {
+    #region --- parse array field to string list --------------------------------------------------
+    private static List<string> ParseArrayFieldToStringList(JsonArray? nodeArray, string field) {
       List<string> result = new List<string>();
 
       foreach (JsonNode? node in nodeArray.EmptyIfNull()) {
@@ -225,8 +225,8 @@ namespace tar.IMDbScraper.Base {
       return result;
     }
     #endregion
-    #region --- _parse associated title -----------------------------------------------------------
-    private static AssociatedTitle? _parseAssociatedTitle(JsonNode? node) {
+    #region --- parse associated title ------------------------------------------------------------
+    private static AssociatedTitle? ParseAssociatedTitle(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -245,7 +245,7 @@ namespace tar.IMDbScraper.Base {
           LocalizedTitle    = localizedTitle,
           OriginalTitle     = originalTitle,
           PublicationStatus = publicationStatus,
-          Series            = _parseAssociatedTitle(node?["series"]?["series"]),
+          Series            = ParseAssociatedTitle(node?["series"]?["series"]),
           Type              = type,
           URL               = Helper.GetUrl(id, IdCategory.Title),
           YearFrom          = yearFrom,
@@ -256,21 +256,21 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse award ----------------------------------------------------------------------
-    private static Award? _parseAward(JsonNode? node, string awardsEvents) {
+    #region --- parse award -----------------------------------------------------------------------
+    private static Award? ParseAward(JsonNode? node, string awardsEvents) {
       if (node == null) {
         return null;
       }
 
-      string?      category   = node?["award"]?["category"]?["text"]?.ToString();
-      string?      @event     = node?["award"]?["event"]?["text"]?.ToString();
-      string?      id         = node?["id"]?.ToString();
-      bool?        isWinner   = Helper.GetBool(node?["isWinner"]?.ToString());
-      string?      name       = node?["award"]?["text"]?.ToString();
-      List<Person> persons    = _parsePersons(node?["awardedEntities"]?["secondaryAwardNames"]?.AsArray());
-      string?      textAsHtml = Helper.AdjustHTML(node?["award"]?["notes"]?["plaidHtml"]?.ToString());
-      string?      url        = Helper.GetUrl(awardsEvents, IdCategory.AwardsEvent);
-      int?         year       = Helper.GetInt(node?["award"]?["eventEdition"]?["year"]?.ToString());
+      string? category   = node?["award"]?["category"]?["text"]?.ToString();
+      string? @event     = node?["award"]?["event"]?["text"]?.ToString();
+      string? id         = node?["id"]?.ToString();
+      bool?   isWinner   = Helper.GetBool(node?["isWinner"]?.ToString());
+      string? name       = node?["award"]?["text"]?.ToString();
+      Persons persons    = ParsePersons(node?["awardedEntities"]?["secondaryAwardNames"]?.AsArray());
+      string? textAsHtml = Helper.AdjustHTML(node?["award"]?["notes"]?["plaidHtml"]?.ToString());
+      string? url        = Helper.GetUrl(awardsEvents, IdCategory.AwardsEvent);
+      int?    year       = Helper.GetInt(node?["award"]?["eventEdition"]?["year"]?.ToString());
 
       if (id.HasText()) {
         return new Award() {
@@ -291,8 +291,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse awards event ---------------------------------------------------------------
-    private static AwardsEvent? _parseAwardsEvent(JsonNode? node) {
+    #region --- parse awards event ----------------------------------------------------------------
+    private static AwardsEvent? ParseAwardsEvent(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -311,42 +311,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse company --------------------------------------------------------------------
-    private static Company? _parseCompany(JsonNode? node, string categorieDescription) {
-      if (node == null) {
-        return null;
-      }
-
-      List<string> countries = _parseArrayFieldToStringList(node?["countries"]?.AsArray(), "text");
-      string?      id        = node?["company"]?["id"]?.ToString();
-      string?      name      = node?["displayableProperty"]?["value"]?["plainText"]?.ToString();
-      List<string> notes     = _parseArrayFieldToStringList(node?["attributes"]?.AsArray(), "text");
-      int?         yearFrom  = Helper.GetInt(node?["yearsInvolved"]?["year"]?.ToString());
-      int?         yearTo    = Helper.GetInt(node?["yearsInvolved"]?["endYear"]?.ToString());
-
-      if ( id.HasText()        || name.HasText()
-        || countries.Count > 0 || notes.Count > 0
-        || yearFrom.HasValue   || yearTo.HasValue) { 
-        return new Company() {
-          Category  = categorieDescription.HasText()
-                    ? char.ToUpper(categorieDescription[0])
-                    + categorieDescription[1..]
-                    : null,
-          Countries = countries,
-          ID        = id,
-          Name      = name,
-          Notes     = notes,
-          URL       = Helper.GetUrl(id, IdCategory.Company),
-          YearFrom  = yearFrom,
-          YearTo    = yearTo
-        };
-      }
-
-      return null;
-    }
-    #endregion
-    #region --- _parse company --------------------------------------------------------------------
-    private static Company _parseCompany(HtmlNode node) {
+    #region --- parse company (html node)----------------------------------------------------------
+    private static Company ParseCompany(HtmlNode node) {
       HtmlNode? a = node
         .Descendants("a")
         .FirstOrDefault();
@@ -379,13 +345,47 @@ namespace tar.IMDbScraper.Base {
       };
     }
     #endregion
-    #region --- _parse connection -----------------------------------------------------------------
-    private static Connection? _parseConnection(JsonNode? node, string categorieDescription) {
+    #region --- parse company (json node) ---------------------------------------------------------
+    private static Company? ParseCompany(JsonNode? node, string categorieDescription) {
       if (node == null) {
         return null;
       }
 
-      AssociatedTitle? associatedTitle = _parseAssociatedTitle(node?["associatedTitle"]);
+      List<string> countries = ParseArrayFieldToStringList(node?["countries"]?.AsArray(), "text");
+      string?      id        = node?["company"]?["id"]?.ToString();
+      string?      name      = node?["displayableProperty"]?["value"]?["plainText"]?.ToString();
+      List<string> notes     = ParseArrayFieldToStringList(node?["attributes"]?.AsArray(), "text");
+      int?         yearFrom  = Helper.GetInt(node?["yearsInvolved"]?["year"]?.ToString());
+      int?         yearTo    = Helper.GetInt(node?["yearsInvolved"]?["endYear"]?.ToString());
+
+      if ( id.HasText()        || name.HasText()
+        || countries.Count > 0 || notes.Count > 0
+        || yearFrom.HasValue   || yearTo.HasValue) { 
+        return new Company() {
+          Category  = categorieDescription.HasText()
+                    ? char.ToUpper(categorieDescription[0])
+                    + categorieDescription[1..]
+                    : null,
+          Countries = countries,
+          ID        = id,
+          Name      = name,
+          Notes     = notes,
+          URL       = Helper.GetUrl(id, IdCategory.Company),
+          YearFrom  = yearFrom,
+          YearTo    = yearTo
+        };
+      }
+
+      return null;
+    }
+    #endregion
+    #region --- parse connection ------------------------------------------------------------------
+    private static Connection? ParseConnection(JsonNode? node, string categorieDescription) {
+      if (node == null) {
+        return null;
+      }
+
+      AssociatedTitle? associatedTitle = ParseAssociatedTitle(node?["associatedTitle"]);
       string?          notesAsHtml = Helper.AdjustHTML(node?["description"]?["plaidHtml"]?.ToString());
 
       if (associatedTitle != null) { 
@@ -399,8 +399,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse country --------------------------------------------------------------------
-    private static Country? _parseCountry(JsonNode? node) {
+    #region --- parse country ---------------------------------------------------------------------
+    private static Country? ParseCountry(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -419,8 +419,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse crazy credit ---------------------------------------------------------------
-    private static CrazyCredit? _parseCrazyCredit(JsonNode? node) {
+    #region --- parse crazy credit ----------------------------------------------------------------
+    private static CrazyCredit? ParseCrazyCredit(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -441,8 +441,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse critic review --------------------------------------------------------------
-    private static CriticReview? _parseCriticReview(JsonNode? node) {
+    #region --- parse critic review ---------------------------------------------------------------
+    private static CriticReview? ParseCriticReview(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -468,8 +468,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse crew member ----------------------------------------------------------------
-    private static Person _parseCrewMember(HtmlNode node) {
+    #region --- parse crew member -----------------------------------------------------------------
+    private static Person ParseCrewMember(HtmlNode node) {
       HtmlNode? a = node
         .Descendants("td")
         .FirstOrDefault(x => x.Attributes["class"]?
@@ -528,15 +528,15 @@ namespace tar.IMDbScraper.Base {
       };
     }
     #endregion
-    #region --- _parse external link --------------------------------------------------------------
-    private static ExternalLink? _parseExternalLink(JsonNode? node, string categorieDescription) {
+    #region --- parse external link ---------------------------------------------------------------
+    private static ExternalLink? ParseExternalLink(JsonNode? node, string categorieDescription) {
       if (node == null) {
         return null;
       }
 
-      string?         label     = node?["label"]?.ToString();
-      List<Language>? languages = _parseLanguages(node?["externalLinkLanguages"]?.AsArray());
-      string?         url       = node?["url"]?.ToString();
+      string?    label     = node?["label"]?.ToString();
+      Languages? languages = ParseLanguages(node?["externalLinkLanguages"]?.AsArray());
+      string?    url       = node?["url"]?.ToString();
 
       if (languages != null || label.HasText() || url.HasText()) {
         return new ExternalLink() {
@@ -544,7 +544,7 @@ namespace tar.IMDbScraper.Base {
                     ? char.ToUpper(categorieDescription[0]) + categorieDescription[1..]
                     : null,
           Label     = label,
-          Languages = languages,
+          Languages = languages ?? new Languages(),
           URL       = url
         };
       }
@@ -552,8 +552,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse filming date ---------------------------------------------------------------
-    private static Dates? _parseFilmingDate(JsonNode? node) {
+    #region --- parse filming date ----------------------------------------------------------------
+    private static FilmingDate? ParseFilmingDate(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -567,7 +567,7 @@ namespace tar.IMDbScraper.Base {
                                               node?["endDate"]?["year"]?.ToString());
 
       if (begin.HasValue || end.HasValue) {
-        return new Dates() {
+        return new FilmingDate() {
           Begin = begin,
           End   = end
         };
@@ -576,16 +576,16 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse filming location -----------------------------------------------------------
-    private static FilmingLocation? _parseFilmingLocation(JsonNode? node) {
+    #region --- parse filming location ------------------------------------------------------------
+    private static FilmingLocation? ParseFilmingLocation(JsonNode? node) {
       if (node == null) {
         return null;
       }
 
       string?        address       = node?["text"]?.ToString();
       string?        id            = node?["id"]?.ToString();
-      InterestScore? interestScore = _parseInterestScore(node?["interestScore"]);
-      List<string>   notes         = _parseArrayFieldToStringList(node?["displayableProperty"]?["qualifiersInMarkdownList"]?.AsArray(), "markdown");
+      InterestScore? interestScore = ParseInterestScore(node?["interestScore"]);
+      List<string>   notes         = ParseArrayFieldToStringList(node?["displayableProperty"]?["qualifiersInMarkdownList"]?.AsArray(), "markdown");
 
       if (address.HasText() || id.HasText() || interestScore != null || notes.Count > 0) {
         return new FilmingLocation() {
@@ -599,14 +599,14 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse goof -----------------------------------------------------------------------
-    private static Goof? _parseGoof(JsonNode? node, List<JsonNode>? nodesWithoutSpoiler, string categorieDescription) {
+    #region --- parse goof ------------------------------------------------------------------------
+    private static Goof? ParseGoof(JsonNode? node, List<JsonNode>? nodesWithoutSpoiler, string categorieDescription) {
       if (node == null) {
         return null;
       }
 
       string?        id            = node?["id"]?.ToString();
-      InterestScore? interestScore = _parseInterestScore(node?["interestScore"]);
+      InterestScore? interestScore = ParseInterestScore(node?["interestScore"]);
       string?        textAsHtml    = Helper.AdjustHTML(node?["text"]?["plaidHtml"]?.ToString());
 
       if (id.HasText() || interestScore != null || textAsHtml.HasText()) {
@@ -631,8 +631,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse interest score -------------------------------------------------------------
-    private static InterestScore? _parseInterestScore(JsonNode? node) {
+    #region --- parse interest score --------------------------------------------------------------
+    private static InterestScore? ParseInterestScore(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -643,14 +643,14 @@ namespace tar.IMDbScraper.Base {
       return Helper.GetInterestScore(upVotes, null, totalVotes);
     }
     #endregion
-    #region --- _parse keyword --------------------------------------------------------------------
-    private static Keyword? _parseKeyword(JsonNode? node) {
+    #region --- parse keyword ---------------------------------------------------------------------
+    private static Keyword? ParseKeyword(JsonNode? node) {
       if (node == null) {
         return null;
       }
 
       string?        id            = node?["keyword"]?["id"]?.ToString();
-      InterestScore? interestScore = _parseInterestScore(node?["interestScore"]);
+      InterestScore? interestScore = ParseInterestScore(node?["interestScore"]);
       string?        text          = node?["keyword"]?["text"]?["text"]?.ToString();
 
       if (id.HasText() || text.HasText() || interestScore != null) {
@@ -665,8 +665,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse language -------------------------------------------------------------------
-    private static Language? _parseLanguage(JsonNode? node) {
+    #region --- parse language --------------------------------------------------------------------
+    private static Language? ParseLanguage(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -685,12 +685,12 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse languages ------------------------------------------------------------------
-    private static List<Language> _parseLanguages(JsonArray? nodeArray) {
-      List<Language> result = new List<Language>();
+    #region --- parse languages -------------------------------------------------------------------
+    private static Languages ParseLanguages(JsonArray? nodeArray) {
+      Languages result = new Languages();
 
       foreach (JsonNode? node in nodeArray.EmptyIfNull()) {
-        Language? language = _parseLanguage(node);
+        Language? language = ParseLanguage(node);
 
         if (language != null) {
           result.Add(language);
@@ -700,8 +700,8 @@ namespace tar.IMDbScraper.Base {
       return result;
     }
     #endregion
-    #region --- _parse news -----------------------------------------------------------------------
-    private static News? _parseNews(JsonNode? node) {
+    #region --- parse news ------------------------------------------------------------------------
+    private static NewsEntry? ParseNews(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -717,7 +717,7 @@ namespace tar.IMDbScraper.Base {
 
       if (by.HasText() || id.HasText() || imageURL.HasText() || source.HasText()
         || sourceURL.HasText() || textAsHtml.HasText() || title.HasText()) {
-        return new News() {
+        return new NewsEntry() {
           By        = by,
           Date      = date,
           ID        = id,
@@ -733,10 +733,10 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse parental guide section -----------------------------------------------------
-    private static ParentalGuideSection? _parseParentalGuideSection(HtmlNode sectionNoSpoilers, HtmlNode sectionSpoilers) {
-      List<ParentalGuideEntry> noSpoilers = new List<ParentalGuideEntry>();
-      List<ParentalGuideEntry> spoilers   = new List<ParentalGuideEntry>();
+    #region --- parse parental guide section ------------------------------------------------------
+    private static ParentalGuideSection? ParseParentalGuideSection(HtmlNode sectionNoSpoilers, HtmlNode sectionSpoilers) {
+      ParentalGuideEntries noSpoilers = new ParentalGuideEntries();
+      ParentalGuideEntries spoilers   = new ParentalGuideEntries();
       Severity? severity = null;
 
       if (sectionNoSpoilers != null) {
@@ -857,8 +857,8 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse person ---------------------------------------------------------------------
-    private static Person? _parsePerson(JsonNode? node) {
+    #region --- parse person ----------------------------------------------------------------------
+    private static Person? ParsePerson(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -879,12 +879,12 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse persons --------------------------------------------------------------------
-    private static List<Person> _parsePersons(JsonArray? nodeArray) {
-      List<Person> result = new List<Person>();
+    #region --- parse persons ---------------------------------------------------------------------
+    private static Persons ParsePersons(JsonArray? nodeArray) {
+      Persons result = new Persons();
 
       foreach (JsonNode? node in nodeArray.EmptyIfNull()) {
-        Person? person = _parsePerson(node?["name"]);
+        Person? person = ParsePerson(node?["name"]);
         if (person != null) {
           result.Add(person); 
         }
@@ -893,8 +893,8 @@ namespace tar.IMDbScraper.Base {
       return result;
     }
     #endregion
-    #region --- _parse plot summary ---------------------------------------------------------------
-    private static PlotSummary? _parsePlotSummary(JsonNode? node) {
+    #region --- parse plot summary ----------------------------------------------------------------
+    private static PlotSummary? ParsePlotSummary(JsonNode? node) {
       if (node == null) {
         return null;
       }
@@ -916,14 +916,14 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse quote ----------------------------------------------------------------------
-    private static Quote? _parseQuote(JsonNode? node) {
+    #region --- parse quote -----------------------------------------------------------------------
+    private static Quote? ParseQuote(JsonNode? node) {
       if (node == null) {
         return null;
       }
 
       string?        id            = node?["id"]?.ToString();
-      InterestScore? interestScore = _parseInterestScore(node?["interestScore"]);
+      InterestScore? interestScore = ParseInterestScore(node?["interestScore"]);
       string?        textAsHtml    = Helper.AdjustHTML(node?["displayableArticle"]?["body"]?["plaidHtml"]?.ToString());
 
       if (id.HasText() || interestScore != null || textAsHtml.HasText()) {
@@ -937,15 +937,15 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse release date ---------------------------------------------------------------
-    private static ReleaseDate? _parseReleaseDate(JsonNode? node) {
+    #region --- parse release date ----------------------------------------------------------------
+    private static ReleaseDate? ParseReleaseDate(JsonNode? node) {
       if (node == null) {
         return null;
       }
 
-      Country?     country = _parseCountry(node?["country"]);
+      Country?     country = ParseCountry(node?["country"]);
       DateTime?    date    = Helper.GetDateTime(node?["displayableProperty"]?["value"]?["plainText"]?.ToString());
-      List<string> notes   = _parseArrayFieldToStringList(node?["attributes"]?.AsArray(), "text");
+      List<string> notes   = ParseArrayFieldToStringList(node?["attributes"]?.AsArray(), "text");
 
       if (country != null || date.HasValue || notes.Count > 0) {
         return new ReleaseDate() {
@@ -958,9 +958,9 @@ namespace tar.IMDbScraper.Base {
       return null;
     }
     #endregion
-    #region --- _parse suggestion videos ----------------------------------------------------------
-    private static List<SuggestionVideo> _parseSuggestionVideos(JsonArray? nodes) {
-      List<SuggestionVideo> result = new List<SuggestionVideo>();
+    #region --- parse suggestion videos -----------------------------------------------------------
+    private static SuggestionVideos ParseSuggestionVideos(JsonArray? nodes) {
+      SuggestionVideos result = new SuggestionVideos();
 
       foreach (JsonNode? node in nodes.EmptyIfNull()) {
         string? id = node?["id"]?.ToString();
@@ -970,7 +970,7 @@ namespace tar.IMDbScraper.Base {
 
         string? runtimeHours   = null;
         string? runtimeMinutes = null;
-        string? runtimeSeconds = null;
+        string? runtimeSeconds;
         if (occs == 2) {
           runtimeHours   = runtimeText.GetSubstringBeforeOccurrence(':', 1);
           runtimeMinutes = runtimeText.GetSubstringBetweenCharsWithOccurrences(':', ':', 1, 2);
@@ -994,14 +994,14 @@ namespace tar.IMDbScraper.Base {
       return result;
     }
     #endregion
-    #region --- _parse trivia entry ---------------------------------------------------------------
-    private static TriviaEntry? _parseTriviaEntry(JsonNode? node, List<JsonNode>? nodesWithoutSpoiler) {
+    #region --- parse trivia entry ----------------------------------------------------------------
+    private static TriviaEntry? ParseTriviaEntry(JsonNode? node, List<JsonNode>? nodesWithoutSpoiler) {
       if (node == null) {
         return null;
       }
 
       string?        id            = node?["id"]?.ToString();
-      InterestScore? interestScore = _parseInterestScore(node?["interestScore"]);
+      InterestScore? interestScore = ParseInterestScore(node?["interestScore"]);
       string?        textAsHtml    = Helper.AdjustHTML(node?["displayableArticle"]?["body"]?["plaidHtml"]?.ToString());
 
       if (id.HasText() || interestScore != null || textAsHtml.HasText()) {
@@ -1146,11 +1146,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse alternate titles ------------------------------------------------------------
-    internal static List<AlternateTitle> ParseAlternateTitles(List<JsonNode>? nodes) {
-      List<AlternateTitle> result = new List<AlternateTitle>();
+    internal static AlternateTitles ParseAlternateTitles(List<JsonNode>? nodes) {
+      AlternateTitles result = new AlternateTitles();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        AlternateTitle? alsoKnownAs = _parseAlternateTitle(node);
+        AlternateTitle? alsoKnownAs = ParseAlternateTitle(node);
 
         if (alsoKnownAs != null) {
           result.Add(alsoKnownAs);
@@ -1161,16 +1161,16 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse alternate versions page -----------------------------------------------------
-    internal static List<AlternateVersion> ParseAlternateVersionsPage(HtmlDocument? htmlDocument) {
-      List<AlternateVersion> result = new List<AlternateVersion>();
+    internal static AlternateVersions ParseAlternateVersionsPage(HtmlDocument? htmlDocument) {
+      AlternateVersions result = new AlternateVersions();
 
-      JsonArray? jsonArray = _getContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
 
       foreach (JsonNode? node in jsonArray.EmptyIfNull()) {
-        AlternateVersion? alternateVersion = _parseAlternateVersion(node);
+        AlternateVersion? alternateVersion = ParseAlternateVersion(node);
         if (alternateVersion != null) {
           result.Add(alternateVersion);
         }
@@ -1180,11 +1180,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse awards ----------------------------------------------------------------------
-    internal static List<Award> ParseAwards(List<JsonNode>? nodes, string awardsEvents) {
-      List<Award> result = new List<Award>();
+    internal static Awards ParseAwards(List<JsonNode>? nodes, string awardsEvents) {
+      Awards result = new Awards();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        Award? award = _parseAward(node, awardsEvents);
+        Award? award = ParseAward(node, awardsEvents);
 
         if (award != null) {
           result.Add(award);
@@ -1199,7 +1199,7 @@ namespace tar.IMDbScraper.Base {
       List<AwardsEvent> result = new List<AwardsEvent>();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        AwardsEvent? awardEvent = _parseAwardsEvent(node);
+        AwardsEvent? awardEvent = ParseAwardsEvent(node);
 
         if (awardEvent != null) {
           result.Add(awardEvent);
@@ -1256,11 +1256,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse companies -------------------------------------------------------------------
-    internal static List<Company> ParseCompanies(List<JsonNode>? nodes, string categorieDescription) {
-      List<Company> result = new List<Company>();
+    internal static Companies ParseCompanies(List<JsonNode>? nodes, string categorieDescription) {
+      Companies result = new Companies();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        Company? company = _parseCompany(node, categorieDescription);
+        Company? company = ParseCompany(node, categorieDescription);
 
         if (company != null) {
           result.Add(company);
@@ -1271,11 +1271,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse connections -----------------------------------------------------------------
-    internal static List<Connection> ParseConnections(List<JsonNode>? nodes, string categorieDescription) {
-      List<Connection> result = new List<Connection>();
+    internal static Connections ParseConnections(List<JsonNode>? nodes, string categorieDescription) {
+      Connections result = new Connections();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        Connection? connection = _parseConnection(node, categorieDescription);
+        Connection? connection = ParseConnection(node, categorieDescription);
 
         if (connection != null) {
           result.Add(connection);
@@ -1286,16 +1286,16 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse crazy credits page ----------------------------------------------------------
-    internal static List<CrazyCredit> ParseCrazyCreditsPage(HtmlDocument? htmlDocument) {
-      List<CrazyCredit> result = new List<CrazyCredit>();
+    internal static CrazyCredits ParseCrazyCreditsPage(HtmlDocument? htmlDocument) {
+      CrazyCredits result = new CrazyCredits();
 
-      JsonArray? jsonArray = _getContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
 
       foreach (JsonNode? node in jsonArray.EmptyIfNull()) {
-        CrazyCredit? crazyCredit = _parseCrazyCredit(node);
+        CrazyCredit? crazyCredit = ParseCrazyCredit(node);
         if (crazyCredit != null) {
           result.Add(crazyCredit);
         }
@@ -1305,16 +1305,16 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse critic reviews page ---------------------------------------------------------
-    internal static List<CriticReview> ParseCriticReviewsPage(HtmlDocument? htmlDocument) {
-      List<CriticReview> result = new List<CriticReview>();
+    internal static CriticReviews ParseCriticReviewsPage(HtmlDocument? htmlDocument) {
+      CriticReviews result = new CriticReviews();
 
-      JsonArray? jsonArray = _getContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
 
       foreach (JsonNode? node in jsonArray.EmptyIfNull()) {
-        CriticReview? criticReview = _parseCriticReview(node);
+        CriticReview? criticReview = ParseCriticReview(node);
         if (criticReview != null) {
           result.Add(criticReview);
         }
@@ -1370,13 +1370,13 @@ namespace tar.IMDbScraper.Base {
 
         if (episode != null && path.Contains("mostRecent")) {
           result ??= new EpisodesCard();
-          result.MostRecent ??= new List<Episode>();
+          result.MostRecent ??= new Episodes();
           result.MostRecent.Add(episode);
         }
 
         if (episode != null && path.Contains("topRated")) {
           result ??= new EpisodesCard();
-          result.TopRated ??= new List<Episode>();
+          result.TopRated ??= new Episodes();
           result.TopRated.Add(episode);
         }
       }
@@ -1385,11 +1385,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse external links --------------------------------------------------------------
-    internal static List<ExternalLink> ParseExternalLinks(List<JsonNode>? nodes, string categorieDescription) {
-      List<ExternalLink> result = new List<ExternalLink>();
+    internal static ExternalLinks ParseExternalLinks(List<JsonNode>? nodes, string categorieDescription) {
+      ExternalLinks result = new ExternalLinks();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        ExternalLink? externalWebsite = _parseExternalLink(node, categorieDescription);
+        ExternalLink? externalWebsite = ParseExternalLink(node, categorieDescription);
 
         if (externalWebsite != null) {
           result.Add(externalWebsite);
@@ -1401,109 +1401,59 @@ namespace tar.IMDbScraper.Base {
     #endregion
     #region --- parse faq page --------------------------------------------------------------------
     internal static FAQPage? ParseFAQPage(HtmlDocument? htmlDocument) {
-      List<FAQEntry> noSpoilers = new List<FAQEntry>();
-      List<FAQEntry> spoilers   = new List<FAQEntry>();
+      FAQEntries noSpoilers = new FAQEntries();
+      FAQEntries spoilers   = new FAQEntries();
 
-      // needs rework, new node:
-      HtmlNode? faqSection = htmlDocument?
-        .DocumentNode
-        .SelectSingleNode("//div[@data-testid=\"sub-section-faqs\"]");
-      // ... better to get json, if possible ...
+      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+        ["categories"]?
+        .AsArray();
 
+      if (jsonArray != null) {
+        #region --- no spoilers -------------------------------------------------------------------
+        JsonArray? jsonArrayNoSpoilers = jsonArray
+          [0]?
+          ["section"]?
+          ["items"]?
+          .AsArray();
 
-      #region --- no spoilers ---------------------------------------------------------------------
-      HtmlNode? nodeNoSpoilers = htmlDocument?
-        .DocumentNode
-        .SelectSingleNode("//section[@id=\"faq-no-spoilers\"]");
+        foreach (JsonNode? node in jsonArrayNoSpoilers.EmptyIfNull()) {
+          string? answerAsHtml = node?["answer"]?.ToString();
+          string? id           = node?["id"]?.ToString();
+          string? question     = node?["question"]?.ToString();
 
-      IEnumerable<HtmlNode>? noSpoilersList = nodeNoSpoilers?
-        .Descendants("li");
-
-      foreach (HtmlNode entry in noSpoilersList.EmptyIfNull()) {
-        string? id = entry
-          .Descendants("section")
-          .FirstOrDefault()?
-          .Attributes["id"]?
-          .Value;
-
-        string? question = entry
-          .Descendants("div")
-          .FirstOrDefault(x => x.Attributes["class"]?
-                                .Value == "faq-question-text")?
-          .InnerText
-          .Trim();
-
-        string? answerAsHtml = Helper.AdjustHTML(
-          entry
-          .Descendants("div")
-          .FirstOrDefault(x => x.Attributes["class"] != null
-                            && x.Attributes["class"]
-                                .Value
-                                .Contains("hideable-container"))?
-          .InnerHtml
-          .GetWithReplacedSubstrings("<a href=\"/registration/", "</a>", string.Empty)
-          .GetWithMergedWhitespace()?
-          .Replace("<p>\n ", "<p>")
-          .Replace("\n </p>", "</p>")
-          .Trim()
-        );
-
-        if (id.HasText()) {
-          noSpoilers.Add(new FAQEntry() { 
-            Answer    = Helper.GetTextViaHtmlText(answerAsHtml),
-            ID        = id,
-            IsSpoiler = false,
-            Question  = question
-          });
+          if (id.HasText()) {
+            noSpoilers.Add(new FAQEntry() {
+              Answer    = Helper.GetTextViaHtmlText(answerAsHtml),
+              ID        = id,
+              IsSpoiler = false,
+              Question  = question
+            });
+          }
         }
-      }
-      #endregion
-      #region --- spoilers ------------------------------------------------------------------------
-      HtmlNode? nodeSpoilers = htmlDocument?
-        .DocumentNode
-        .SelectSingleNode("//section[@id=\"faq-spoilers\"]");
+        #endregion
+        #region --- spoilers ----------------------------------------------------------------------
+        JsonArray? jsonArraySpoilers = jsonArray
+          [0]?
+          ["spoilerSection"]?
+          ["items"]?
+          .AsArray();
 
-      IEnumerable<HtmlNode>? spoilersList = nodeSpoilers?
-        .Descendants("li");
+        foreach (JsonNode? node in jsonArraySpoilers.EmptyIfNull()) {
+          string? answerAsHtml = node?["answer"]?.ToString();
+          string? id           = node?["id"]?.ToString();
+          string? question     = node?["question"]?.ToString();
 
-      foreach (HtmlNode entry in spoilersList.EmptyIfNull()) {
-        string? id = entry
-          .Descendants("section")
-          .FirstOrDefault()?
-          .Attributes["id"]?
-          .Value;
-
-        string? question = entry
-          .Descendants("div")
-          .FirstOrDefault(x => x.Attributes["class"]?
-                                .Value == "faq-question-text")?
-          .InnerText
-          .Trim();
-
-        string? answerAsHtml = Helper.AdjustHTML(
-          entry
-          .Descendants("div")
-          .FirstOrDefault(x => x.Attributes["class"] != null
-                            && x.Attributes["class"]
-                                .Value
-                                .Contains("hideable-container"))?
-          .InnerHtml
-          .GetWithReplacedSubstrings("<a href=\"/registration/", "</a>", string.Empty)
-          .GetWithMergedWhitespace()?
-          .Replace("<p>\n ", "<p>")
-          .Replace("\n </p>", "</p>")
-          .Trim());
-
-        if (id.HasText()) {
-          spoilers.Add(new FAQEntry() { 
-            Answer    = Helper.GetTextViaHtmlText(answerAsHtml),
-            ID        = id,
-            IsSpoiler = true,
-            Question  = question
-          });
+          if (id.HasText()) {
+            spoilers.Add(new FAQEntry() {
+              Answer    = Helper.GetTextViaHtmlText(answerAsHtml),
+              ID        = id,
+              IsSpoiler = true,
+              Question  = question
+            });
+          }
         }
+        #endregion
       }
-      #endregion
 
       if (noSpoilers.Count > 0 || spoilers.Count > 0) {
         return new FAQPage() {
@@ -1516,11 +1466,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse filming dates ---------------------------------------------------------------
-    internal static List<Dates> ParseFilmingDates(List<JsonNode>? nodes) {
-      List<Dates> result = new List<Dates>();
+    internal static FilmingDates ParseFilmingDates(List<JsonNode>? nodes) {
+      FilmingDates result = new FilmingDates();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        Dates? filmingDate = _parseFilmingDate(node);
+        FilmingDate? filmingDate = ParseFilmingDate(node);
 
         if (filmingDate != null) {
           result.Add(filmingDate);
@@ -1531,11 +1481,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse filming locations -----------------------------------------------------------
-    internal static List<FilmingLocation> ParseFilmingLocations(List<JsonNode>? nodes) {
-      List<FilmingLocation> result = new List<FilmingLocation>();
+    internal static FilmingLocations ParseFilmingLocations(List<JsonNode>? nodes) {
+      FilmingLocations result = new FilmingLocations();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        FilmingLocation? filmingLocation = _parseFilmingLocation(node);
+        FilmingLocation? filmingLocation = ParseFilmingLocation(node);
 
         if (filmingLocation != null) {
           result.Add(filmingLocation);
@@ -1590,7 +1540,7 @@ namespace tar.IMDbScraper.Base {
                           .Count(x => x.Name == "td") > 1);
 
           foreach (HtmlNode entry in entries.EmptyIfNull()) {
-            _addPersonToCreditsList(crew.Cast, _parseActor(entry));
+            AddPersonToCreditsList(crew.Cast, ParseActor(entry));
           }
         } else {
           IEnumerable<HtmlNode>? entries = table
@@ -1600,38 +1550,38 @@ namespace tar.IMDbScraper.Base {
 
           foreach (HtmlNode entry in entries.EmptyIfNull()) {
             switch (category) {
-              case "additional crew":                            _addPersonToCreditsList(crew.Additional,           _parseCrewMember(entry)); break;
-              case "animation department":                       _addPersonToCreditsList(crew.Animation,            _parseCrewMember(entry)); break;
-              case "art department":                             _addPersonToCreditsList(crew.Art,                  _parseCrewMember(entry)); break;
-              case "art direction by":                           _addPersonToCreditsList(crew.ArtDirectionBy,       _parseCrewMember(entry)); break;
-              case "second unit director or assistant director": _addPersonToCreditsList(crew.AssistantDirection,   _parseCrewMember(entry)); break;
-              case "camera and electrical department":           _addPersonToCreditsList(crew.CameraAndElectrical,  _parseCrewMember(entry)); break;
-              case "casting department":                         _addPersonToCreditsList(crew.Casting,              _parseCrewMember(entry)); break;
-              case "casting by":                                 _addPersonToCreditsList(crew.CastingBy,            _parseCrewMember(entry)); break;
-              case "cinematography by":                          _addPersonToCreditsList(crew.CinematographyBy,     _parseCrewMember(entry)); break;
-              case "costume and wardrobe department":            _addPersonToCreditsList(crew.CostumeAndWardrobe,   _parseCrewMember(entry)); break;
-              case "costume design by":                          _addPersonToCreditsList(crew.CostumeDesignBy,      _parseCrewMember(entry)); break;
-              case "directed by":                                _addPersonToCreditsList(crew.DirectedBy,           _parseCrewMember(entry)); break;
-              case "editing by":                                 _addPersonToCreditsList(crew.EditingBy,            _parseCrewMember(entry)); break;
-              case "editorial department":                       _addPersonToCreditsList(crew.Editorial,            _parseCrewMember(entry)); break;
-              case "location management":                        _addPersonToCreditsList(crew.LocationManagement,   _parseCrewMember(entry)); break;
-              case "makeup department":                          _addPersonToCreditsList(crew.MakeUp,               _parseCrewMember(entry)); break;
-              case "music department":                           _addPersonToCreditsList(crew.Music,                _parseCrewMember(entry)); break;
-              case "music by":                                   _addPersonToCreditsList(crew.MusicBy,              _parseCrewMember(entry)); break;
-              case "produced by":                                _addPersonToCreditsList(crew.ProducedBy,           _parseCrewMember(entry)); break;
-              case "production design by":                       _addPersonToCreditsList(crew.ProductionDesignBy,   _parseCrewMember(entry)); break;
-              case "production management":                      _addPersonToCreditsList(crew.ProductionManagement, _parseCrewMember(entry)); break;
-              case "script and continuity department":           _addPersonToCreditsList(crew.ScriptAndContinuity,  _parseCrewMember(entry)); break;
-              case "set decoration by":                          _addPersonToCreditsList(crew.SetDecorationBy,      _parseCrewMember(entry)); break;
-              case "sound department":                           _addPersonToCreditsList(crew.Sound,                _parseCrewMember(entry)); break;
-              case "special effects by":                         _addPersonToCreditsList(crew.SpecialEffects,       _parseCrewMember(entry)); break;
-              case "stunts":                                     _addPersonToCreditsList(crew.Stunts,               _parseCrewMember(entry)); break;
-              case "thanks":                                     _addPersonToCreditsList(crew.Thanks,               _parseCrewMember(entry)); break;
-              case "transportation department":                  _addPersonToCreditsList(crew.Transportation,       _parseCrewMember(entry)); break;
-              case "visual effects by":                          _addPersonToCreditsList(crew.VisualEffects,        _parseCrewMember(entry)); break;
-              case "writing credits":                            _addPersonToCreditsList(crew.WrittenBy,            _parseCrewMember(entry)); break;
-              case "written by":                                 _addPersonToCreditsList(crew.WrittenBy,            _parseCrewMember(entry)); break;
-              default:                                           _addPersonToCreditsList(crew.Others,               _parseCrewMember(entry)); break;
+              case "additional crew":                            AddPersonToCreditsList(crew.Additional,           ParseCrewMember(entry)); break;
+              case "animation department":                       AddPersonToCreditsList(crew.Animation,            ParseCrewMember(entry)); break;
+              case "art department":                             AddPersonToCreditsList(crew.Art,                  ParseCrewMember(entry)); break;
+              case "art direction by":                           AddPersonToCreditsList(crew.ArtDirectionBy,       ParseCrewMember(entry)); break;
+              case "second unit director or assistant director": AddPersonToCreditsList(crew.AssistantDirection,   ParseCrewMember(entry)); break;
+              case "camera and electrical department":           AddPersonToCreditsList(crew.CameraAndElectrical,  ParseCrewMember(entry)); break;
+              case "casting department":                         AddPersonToCreditsList(crew.Casting,              ParseCrewMember(entry)); break;
+              case "casting by":                                 AddPersonToCreditsList(crew.CastingBy,            ParseCrewMember(entry)); break;
+              case "cinematography by":                          AddPersonToCreditsList(crew.CinematographyBy,     ParseCrewMember(entry)); break;
+              case "costume and wardrobe department":            AddPersonToCreditsList(crew.CostumeAndWardrobe,   ParseCrewMember(entry)); break;
+              case "costume design by":                          AddPersonToCreditsList(crew.CostumeDesignBy,      ParseCrewMember(entry)); break;
+              case "directed by":                                AddPersonToCreditsList(crew.DirectedBy,           ParseCrewMember(entry)); break;
+              case "editing by":                                 AddPersonToCreditsList(crew.EditingBy,            ParseCrewMember(entry)); break;
+              case "editorial department":                       AddPersonToCreditsList(crew.Editorial,            ParseCrewMember(entry)); break;
+              case "location management":                        AddPersonToCreditsList(crew.LocationManagement,   ParseCrewMember(entry)); break;
+              case "makeup department":                          AddPersonToCreditsList(crew.MakeUp,               ParseCrewMember(entry)); break;
+              case "music department":                           AddPersonToCreditsList(crew.Music,                ParseCrewMember(entry)); break;
+              case "music by":                                   AddPersonToCreditsList(crew.MusicBy,              ParseCrewMember(entry)); break;
+              case "produced by":                                AddPersonToCreditsList(crew.ProducedBy,           ParseCrewMember(entry)); break;
+              case "production design by":                       AddPersonToCreditsList(crew.ProductionDesignBy,   ParseCrewMember(entry)); break;
+              case "production management":                      AddPersonToCreditsList(crew.ProductionManagement, ParseCrewMember(entry)); break;
+              case "script and continuity department":           AddPersonToCreditsList(crew.ScriptAndContinuity,  ParseCrewMember(entry)); break;
+              case "set decoration by":                          AddPersonToCreditsList(crew.SetDecorationBy,      ParseCrewMember(entry)); break;
+              case "sound department":                           AddPersonToCreditsList(crew.Sound,                ParseCrewMember(entry)); break;
+              case "special effects by":                         AddPersonToCreditsList(crew.SpecialEffects,       ParseCrewMember(entry)); break;
+              case "stunts":                                     AddPersonToCreditsList(crew.Stunts,               ParseCrewMember(entry)); break;
+              case "thanks":                                     AddPersonToCreditsList(crew.Thanks,               ParseCrewMember(entry)); break;
+              case "transportation department":                  AddPersonToCreditsList(crew.Transportation,       ParseCrewMember(entry)); break;
+              case "visual effects by":                          AddPersonToCreditsList(crew.VisualEffects,        ParseCrewMember(entry)); break;
+              case "writing credits":                            AddPersonToCreditsList(crew.WrittenBy,            ParseCrewMember(entry)); break;
+              case "written by":                                 AddPersonToCreditsList(crew.WrittenBy,            ParseCrewMember(entry)); break;
+              default:                                           AddPersonToCreditsList(crew.Others,               ParseCrewMember(entry)); break;
             }
           }
         }
@@ -1655,11 +1605,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse goofs -----------------------------------------------------------------------
-    internal static List<Goof> ParseGoofs(List<JsonNode>? nodes, List<JsonNode>? nodesWithoutSpoiler, string categorieDescription) {
-      List<Goof> result = new List<Goof>();
+    internal static Goofs ParseGoofs(List<JsonNode>? nodes, List<JsonNode>? nodesWithoutSpoiler, string categorieDescription) {
+      Goofs result = new Goofs();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        Goof? goof = _parseGoof(node, nodesWithoutSpoiler, categorieDescription);
+        Goof? goof = ParseGoof(node, nodesWithoutSpoiler, categorieDescription);
 
         if (goof != null) {
           result.Add(goof);
@@ -1670,11 +1620,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse keywords --------------------------------------------------------------------
-    internal static List<Keyword> ParseKeywords(List<JsonNode>? nodes) {
-      List<Keyword> result = new List<Keyword>();
+    internal static Keywords ParseKeywords(List<JsonNode>? nodes) {
+      Keywords result = new Keywords();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        Keyword? keyword = _parseKeyword(node);
+        Keyword? keyword = ParseKeyword(node);
 
         if (keyword != null) {
           result.Add(keyword);
@@ -1685,12 +1635,12 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse locations page --------------------------------------------------------------
-    internal static LocationsPage? ParseLocationsPage(string imdbID, HtmlDocument? htmlDocument) {
-      List<Dates>           filmingDates     = new List<Dates>();
-      List<FilmingLocation> filmingLocations = new List<FilmingLocation>();
-      List<Dates>           productionDates  = new List<Dates>();
+    internal static LocationsPage? ParseLocationsPage(HtmlDocument? htmlDocument) {
+      FilmingDates     filmingDates     = new FilmingDates();
+      FilmingLocations filmingLocations = new FilmingLocations();
+      ProductionDates  productionDates  = new ProductionDates();
 
-      JsonArray? jsonArray = _getContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
         ["categories"]?
         .AsArray();
 
@@ -1726,7 +1676,7 @@ namespace tar.IMDbScraper.Base {
             }
 
             if (begin.HasValue) {
-              filmingDates.Add(new Dates() {
+              filmingDates.Add(new FilmingDate() {
                 Begin = begin,
                 End   = end
               });
@@ -1792,7 +1742,7 @@ namespace tar.IMDbScraper.Base {
             }
 
             if (begin.HasValue) {
-              productionDates.Add(new Dates() {
+              productionDates.Add(new ProductionDate() {
                 Begin = begin,
                 End   = end
               });
@@ -1868,7 +1818,7 @@ namespace tar.IMDbScraper.Base {
       int?      yearTo            = Helper.GetInt(nodeAbove?["releaseYear"]?["endYear"]?.ToString());
       #endregion
       #region --- box office ----------------------------------------------------------------------
-      List<BoxOfficeEntry> boxOffice = new List<BoxOfficeEntry>();
+      BoxOfficeEntries boxOffice = new BoxOfficeEntries();
       long? boxOfficeProduction = Helper.GetLong(nodeMain?["productionBudget"]?["budget"]?["amount"]?.ToString());
       if (boxOfficeProduction.HasValue) {
         boxOffice.Add(new BoxOfficeEntry() {
@@ -1912,7 +1862,7 @@ namespace tar.IMDbScraper.Base {
         ["countries"]?
         .AsArray();
 
-      List<Country> countries = new List<Country>();
+      Countries countries = new Countries();
       foreach (JsonNode? node in nodeCountries.EmptyIfNull()) {
         string? countryID   = node?["id"]?.ToString();
         string? countryName = node?["text"]?.ToString();
@@ -1925,7 +1875,7 @@ namespace tar.IMDbScraper.Base {
       }
       #endregion
       #region --- crew ----------------------------------------------------------------------------
-      List<Person> actors = new List<Person>();
+      Persons actors = new Persons();
       if (nodeMain?["cast"]?["edges"]?.AsArray().Count > 0) {
         JsonArray? nodeCast = nodeMain?["cast"]?["edges"]?.AsArray();
 
@@ -1963,7 +1913,7 @@ namespace tar.IMDbScraper.Base {
         }
       }
 
-      List<Person> creators = new List<Person>();      
+      Persons creators = new Persons();
       if (nodeMain?["creators"]?.AsArray().Count > 0) { 
         JsonArray? nodeCreators = nodeMain?["creators"]?.AsArray()[0]?["credits"]?.AsArray();
 
@@ -1981,7 +1931,7 @@ namespace tar.IMDbScraper.Base {
         }
       }
       
-      List<Person> directors = new List<Person>();
+      Persons directors = new Persons();
       if (nodeMain?["directors"]?.AsArray().Count > 0) { 
         JsonArray? nodeDirectors = nodeMain?["directors"]?.AsArray()[0]?["credits"]?.AsArray();
 
@@ -1999,7 +1949,7 @@ namespace tar.IMDbScraper.Base {
         }
       }
 
-      List<Person> writers = new List<Person>();
+      Persons writers = new Persons();
       if (nodeMain?["writers"]?.AsArray().Count > 0) { 
         JsonArray? nodeWriters = nodeMain?["writers"]?.AsArray()[0]?["credits"]?.AsArray();
 
@@ -2057,7 +2007,7 @@ namespace tar.IMDbScraper.Base {
       #region --- genres --------------------------------------------------------------------------
       JsonArray? nodeGenres = nodeAbove?["genres"]?["genres"]?.AsArray();
       
-      List<Genre> genres = new List<Genre>();
+      Genres genres = new Genres();
       foreach (JsonNode? node in nodeGenres.EmptyIfNull()) {
         string? genreID   = node?["id"]?.ToString();
         string? genreName = node?["text"]?.ToString();
@@ -2073,7 +2023,7 @@ namespace tar.IMDbScraper.Base {
       #region --- languages -----------------------------------------------------------------------
       JsonArray? nodeLanguages = nodeMain?["spokenLanguages"]?["spokenLanguages"]?.AsArray();
 
-      List<Language> languages = new List<Language>();
+      Languages languages = new Languages();
       foreach (JsonNode? node in nodeLanguages.EmptyIfNull()) {
         string? languageID   = node?["id"]?.ToString();
         string? languageName = node?["text"]?.ToString();
@@ -2100,7 +2050,7 @@ namespace tar.IMDbScraper.Base {
       #region --- similar titles ------------------------------------------------------------------
       JsonArray? nodeSimilarTitles = nodeMain?["moreLikeThisTitles"]?["edges"]?.AsArray();
 
-      List<SimilarTitle> similarTitles = new List<SimilarTitle>();
+      SimilarTitles similarTitles = new SimilarTitles();
       foreach (JsonNode? node in nodeSimilarTitles.EmptyIfNull()) {
         string? similarTitleCertificate      = node?["node"]?["certificate"]?["rating"]?.ToString();
         string? similarTitleID               = node?["node"]?["id"]?.ToString();
@@ -2113,7 +2063,7 @@ namespace tar.IMDbScraper.Base {
         int?    similarTitleYearTo           = Helper.GetInt(node?["node"]?["releaseYear"]?["endYear"]?.ToString());
 
         JsonArray? nodeSimilarTitlesGenres = node?["node"]?["titleGenres"]?["genres"]?.AsArray();
-        List<Genre> similarTitleGenres = new List<Genre>();
+        Genres similarTitleGenres = new Genres();
         foreach (JsonNode? nodeGenre in nodeSimilarTitlesGenres.EmptyIfNull()) {
           similarTitleGenres.Add(new Genre() { 
             ID   = nodeGenre?["genre"]?["id"]?.ToString(),
@@ -2147,7 +2097,7 @@ namespace tar.IMDbScraper.Base {
       #endregion
       #region --- technical -----------------------------------------------------------------------
       JsonArray? nodeTechnicalAspectRatios = nodeMain?["technicalSpecifications"]?["aspectRatios"]?["items"]?.AsArray();
-      List<TechnicalEntry> technicalAspectRatios = new List<TechnicalEntry>();
+      TechnicalEntries technicalAspectRatios = new TechnicalEntries();
       foreach (JsonNode? node in nodeTechnicalAspectRatios.EmptyIfNull()) {
         technicalAspectRatios.Add(new TechnicalEntry() {
           Category  = "Aspect Ratio",
@@ -2156,7 +2106,7 @@ namespace tar.IMDbScraper.Base {
       }
 
       JsonArray? nodeTechnicalColorations = nodeMain?["technicalSpecifications"]?["colorations"]?["items"]?.AsArray();
-      List<TechnicalEntry> technicalColorations = new List<TechnicalEntry>();
+      TechnicalEntries technicalColorations = new TechnicalEntries();
       foreach (JsonNode? node in nodeTechnicalColorations.EmptyIfNull()) {
         technicalColorations.Add(new TechnicalEntry() {
           Category  = "Coloration",
@@ -2165,7 +2115,7 @@ namespace tar.IMDbScraper.Base {
       }
 
       JsonArray? nodeTechnicalSoundMixes = nodeMain?["technicalSpecifications"]?["soundMixes"]?["items"]?.AsArray();
-      List<TechnicalEntry> technicalSoundMixes = new List<TechnicalEntry>();
+      TechnicalEntries technicalSoundMixes = new TechnicalEntries();
       foreach (JsonNode? node in nodeTechnicalSoundMixes.EmptyIfNull()) {
         technicalSoundMixes.Add(new TechnicalEntry() {
           Category  = "Sound Mix",
@@ -2224,7 +2174,7 @@ namespace tar.IMDbScraper.Base {
       #endregion
       #region --- videos --------------------------------------------------------------------------
       JsonArray? nodeVideos = nodeMain?["videoStrip"]?["edges"]?.AsArray();
-      List<Video> videos = new List<Video>();
+      Videos videos = new Videos();
       foreach (JsonNode? node in nodeVideos.EmptyIfNull()) {
         string? videoID               = node?["node"]?["id"]?.ToString();
         string? videoImageURL         = Helper.GetImageURL(node?["node"]?["thumbnail"]?["url"]?.ToString());
@@ -2285,11 +2235,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse news list -------------------------------------------------------------------
-    internal static List<News> ParseNewsList(List<JsonNode>? nodes) {
-      List<News> result = new List<News>();
+    internal static NewsEntries ParseNewsList(List<JsonNode>? nodes) {
+      NewsEntries result = new NewsEntries();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        News? news = _parseNews(node);
+        NewsEntry? news = ParseNews(node);
 
         if (news != null) {
           result.Add(news);
@@ -2318,7 +2268,7 @@ namespace tar.IMDbScraper.Base {
       HtmlNode nodeViolenceSpoiler    = htmlDocument.DocumentNode.SelectSingleNode("//section[@id=\"advisory-spoiler-violence\"]");
 
       string? mpaa = null;
-      List<Certification> certifications = new List<Certification>();
+      Certifications certifications = new Certifications();
       if (nodeCertificates != null) {
         mpaa = nodeCertificates
           .Descendants("tr")
@@ -2365,11 +2315,11 @@ namespace tar.IMDbScraper.Base {
         }
       }
 
-      ParentalGuideSection? drugs       = _parseParentalGuideSection(nodeDrugs,       nodeDrugsSpoiler);
-      ParentalGuideSection? frightening = _parseParentalGuideSection(nodeFrightening, nodeFrighteningSpoiler);
-      ParentalGuideSection? nudity      = _parseParentalGuideSection(nodeNudity,      nodeNuditySpoiler);
-      ParentalGuideSection? profanity   = _parseParentalGuideSection(nodeProfanity,   nodeProfanitySpoiler);
-      ParentalGuideSection? violence    = _parseParentalGuideSection(nodeViolence,    nodeViolenceSpoiler);
+      ParentalGuideSection? drugs       = ParseParentalGuideSection(nodeDrugs,       nodeDrugsSpoiler);
+      ParentalGuideSection? frightening = ParseParentalGuideSection(nodeFrightening, nodeFrighteningSpoiler);
+      ParentalGuideSection? nudity      = ParseParentalGuideSection(nodeNudity,      nodeNuditySpoiler);
+      ParentalGuideSection? profanity   = ParseParentalGuideSection(nodeProfanity,   nodeProfanitySpoiler);
+      ParentalGuideSection? violence    = ParseParentalGuideSection(nodeViolence,    nodeViolenceSpoiler);
 
       if (mpaa.HasText() || certifications.Count > 0
         || drugs != null || frightening != null || nudity != null || profanity != null || violence != null) {
@@ -2388,11 +2338,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse plot summaries --------------------------------------------------------------
-    internal static List<PlotSummary> ParsePlotSummaries(List<JsonNode>? nodes) {
-      List<PlotSummary> result = new List<PlotSummary>();
+    internal static PlotSummaries ParsePlotSummaries(List<JsonNode>? nodes) {
+      PlotSummaries result = new PlotSummaries();
 
       foreach (JsonNode? node in nodes.EmptyIfNull()) {
-        PlotSummary? plotSummary = _parsePlotSummary(node);
+        PlotSummary? plotSummary = ParsePlotSummary(node);
         if (plotSummary != null) {
           result.Add(plotSummary); 
         }
@@ -2402,11 +2352,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse quotes ----------------------------------------------------------------------
-    internal static List<Quote> ParseQuotes(List<JsonNode>? nodes) {
-      List<Quote> result = new List<Quote>();
+    internal static Quotes ParseQuotes(List<JsonNode>? nodes) {
+      Quotes result = new Quotes();
 
       foreach (JsonNode? node in nodes.EmptyIfNull()) {
-        Quote? quote = _parseQuote(node);
+        Quote? quote = ParseQuote(node);
         if (quote != null) {
           result.Add(quote); 
         }
@@ -2417,10 +2367,10 @@ namespace tar.IMDbScraper.Base {
     #endregion
     #region --- parse ratings page ----------------------------------------------------------------
     internal static RatingsPage? ParseRatingsPage(HtmlDocument? htmlDocument) {
-      JsonNode? root = _getContentDataFromHTMLScript(htmlDocument)?["histogramData"];
+      JsonNode? root = GetContentDataFromHTMLScript(htmlDocument)?["histogramData"];
 
       JsonArray? nodeHistogram = root?["histogramValues"]?.AsArray();
-      List<Rating> histogram = new List<Rating>();
+      Ratings histogram = new Ratings();
       foreach (JsonNode? node in nodeHistogram.EmptyIfNull()) {
         Rating? histogramRating = Helper.GetRating(
           node?["rating"]?.ToString(),
@@ -2438,7 +2388,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       JsonArray? nodeCountryData = root?["countryData"]?.AsArray();
-      List<RatingInCountry> ratingInCountries = new List<RatingInCountry>();
+      RatingInCountries ratingInCountries = new RatingInCountries();
       foreach (JsonNode? node in nodeCountryData.EmptyIfNull()) {
         string? countryID   = node?["countryCode"]?.ToString();
         string? countryName = node?["displayText"]?.ToString();
@@ -2707,9 +2657,9 @@ namespace tar.IMDbScraper.Base {
                 URL  = Helper.GetUrl(id, IdCategory.Name)
               };
 
-              if (node.InnerText.Trim().StartsWith("Directors:")) { _addPersonToCreditsList(crew.DirectedBy, person); }
-              if (node.InnerText.Trim().StartsWith("Writers:"))   { _addPersonToCreditsList(crew.WrittenBy,  person); }
-              if (node.InnerText.Trim().StartsWith("Stars:"))     { _addPersonToCreditsList(crew.Cast,       person); }
+              if (node.InnerText.Trim().StartsWith("Directors:")) { AddPersonToCreditsList(crew.DirectedBy, person); }
+              if (node.InnerText.Trim().StartsWith("Writers:"))   { AddPersonToCreditsList(crew.WrittenBy,  person); }
+              if (node.InnerText.Trim().StartsWith("Stars:"))     { AddPersonToCreditsList(crew.Cast,       person); }
             }
           }          
         }
@@ -2782,44 +2732,44 @@ namespace tar.IMDbScraper.Base {
                                                     || x.Attributes["class"]?.Value   == "even")
                                                 &&     x.ChildNodes.Count(x => x.Name == "td") > 1)
                                        .EmptyIfNull()) {
-            _addPersonToCreditsList(crew.Cast, _parseActor(tr));
+            AddPersonToCreditsList(crew.Cast, ParseActor(tr));
           }
         } else {
           foreach (HtmlNode tr in table.Descendants("tr")
                                        .Where(x => x.ChildNodes.Count(x => x.Name == "td") > 1)
                                        .EmptyIfNull()) {
             switch (category) {
-              case "additional crew":                            _addPersonToCreditsList(crew.Additional,           _parseCrewMember(tr)); break;
-              case "animation department":                       _addPersonToCreditsList(crew.Animation,            _parseCrewMember(tr)); break;
-              case "art department":                             _addPersonToCreditsList(crew.Art,                  _parseCrewMember(tr)); break;
-              case "art direction by":                           _addPersonToCreditsList(crew.ArtDirectionBy,       _parseCrewMember(tr)); break;
-              case "second unit director or assistant director": _addPersonToCreditsList(crew.AssistantDirection,   _parseCrewMember(tr)); break;
-              case "camera and electrical department":           _addPersonToCreditsList(crew.CameraAndElectrical,  _parseCrewMember(tr)); break;
-              case "casting department":                         _addPersonToCreditsList(crew.Casting,              _parseCrewMember(tr)); break;
-              case "casting by":                                 _addPersonToCreditsList(crew.CastingBy,            _parseCrewMember(tr)); break;
-              case "cinematography by":                          _addPersonToCreditsList(crew.CinematographyBy,     _parseCrewMember(tr)); break;
-              case "costume and wardrobe department":            _addPersonToCreditsList(crew.CostumeAndWardrobe,   _parseCrewMember(tr)); break;
-              case "costume design by":                          _addPersonToCreditsList(crew.CostumeDesignBy,      _parseCrewMember(tr)); break;
-              case "directed by":                                _addPersonToCreditsList(crew.DirectedBy,           _parseCrewMember(tr)); break;
-              case "editing by":                                 _addPersonToCreditsList(crew.EditingBy,            _parseCrewMember(tr)); break;
-              case "editorial department":                       _addPersonToCreditsList(crew.Editorial,            _parseCrewMember(tr)); break;
-              case "location management":                        _addPersonToCreditsList(crew.LocationManagement,   _parseCrewMember(tr)); break;
-              case "makeup department":                          _addPersonToCreditsList(crew.MakeUp,               _parseCrewMember(tr)); break;
-              case "music department":                           _addPersonToCreditsList(crew.Music,                _parseCrewMember(tr)); break;
-              case "music by":                                   _addPersonToCreditsList(crew.MusicBy,              _parseCrewMember(tr)); break;
-              case "produced by":                                _addPersonToCreditsList(crew.ProducedBy,           _parseCrewMember(tr)); break;
-              case "production design by":                       _addPersonToCreditsList(crew.ProductionDesignBy,   _parseCrewMember(tr)); break;
-              case "production management":                      _addPersonToCreditsList(crew.ProductionManagement, _parseCrewMember(tr)); break;
-              case "script and continuity department":           _addPersonToCreditsList(crew.ScriptAndContinuity,  _parseCrewMember(tr)); break;
-              case "set decoration by":                          _addPersonToCreditsList(crew.SetDecorationBy,      _parseCrewMember(tr)); break;
-              case "sound department":                           _addPersonToCreditsList(crew.Sound,                _parseCrewMember(tr)); break;
-              case "special effects by":                         _addPersonToCreditsList(crew.SpecialEffects,       _parseCrewMember(tr)); break;
-              case "stunts":                                     _addPersonToCreditsList(crew.Stunts,               _parseCrewMember(tr)); break;
-              case "thanks":                                     _addPersonToCreditsList(crew.Thanks,               _parseCrewMember(tr)); break;
-              case "transportation department":                  _addPersonToCreditsList(crew.Transportation,       _parseCrewMember(tr)); break;
-              case "visual effects by":                          _addPersonToCreditsList(crew.VisualEffects,        _parseCrewMember(tr)); break;
-              case "written by":                                 _addPersonToCreditsList(crew.WrittenBy,            _parseCrewMember(tr)); break;
-              default:                                           _addPersonToCreditsList(crew.Others,               _parseCrewMember(tr)); break;
+              case "additional crew":                            AddPersonToCreditsList(crew.Additional,           ParseCrewMember(tr)); break;
+              case "animation department":                       AddPersonToCreditsList(crew.Animation,            ParseCrewMember(tr)); break;
+              case "art department":                             AddPersonToCreditsList(crew.Art,                  ParseCrewMember(tr)); break;
+              case "art direction by":                           AddPersonToCreditsList(crew.ArtDirectionBy,       ParseCrewMember(tr)); break;
+              case "second unit director or assistant director": AddPersonToCreditsList(crew.AssistantDirection,   ParseCrewMember(tr)); break;
+              case "camera and electrical department":           AddPersonToCreditsList(crew.CameraAndElectrical,  ParseCrewMember(tr)); break;
+              case "casting department":                         AddPersonToCreditsList(crew.Casting,              ParseCrewMember(tr)); break;
+              case "casting by":                                 AddPersonToCreditsList(crew.CastingBy,            ParseCrewMember(tr)); break;
+              case "cinematography by":                          AddPersonToCreditsList(crew.CinematographyBy,     ParseCrewMember(tr)); break;
+              case "costume and wardrobe department":            AddPersonToCreditsList(crew.CostumeAndWardrobe,   ParseCrewMember(tr)); break;
+              case "costume design by":                          AddPersonToCreditsList(crew.CostumeDesignBy,      ParseCrewMember(tr)); break;
+              case "directed by":                                AddPersonToCreditsList(crew.DirectedBy,           ParseCrewMember(tr)); break;
+              case "editing by":                                 AddPersonToCreditsList(crew.EditingBy,            ParseCrewMember(tr)); break;
+              case "editorial department":                       AddPersonToCreditsList(crew.Editorial,            ParseCrewMember(tr)); break;
+              case "location management":                        AddPersonToCreditsList(crew.LocationManagement,   ParseCrewMember(tr)); break;
+              case "makeup department":                          AddPersonToCreditsList(crew.MakeUp,               ParseCrewMember(tr)); break;
+              case "music department":                           AddPersonToCreditsList(crew.Music,                ParseCrewMember(tr)); break;
+              case "music by":                                   AddPersonToCreditsList(crew.MusicBy,              ParseCrewMember(tr)); break;
+              case "produced by":                                AddPersonToCreditsList(crew.ProducedBy,           ParseCrewMember(tr)); break;
+              case "production design by":                       AddPersonToCreditsList(crew.ProductionDesignBy,   ParseCrewMember(tr)); break;
+              case "production management":                      AddPersonToCreditsList(crew.ProductionManagement, ParseCrewMember(tr)); break;
+              case "script and continuity department":           AddPersonToCreditsList(crew.ScriptAndContinuity,  ParseCrewMember(tr)); break;
+              case "set decoration by":                          AddPersonToCreditsList(crew.SetDecorationBy,      ParseCrewMember(tr)); break;
+              case "sound department":                           AddPersonToCreditsList(crew.Sound,                ParseCrewMember(tr)); break;
+              case "special effects by":                         AddPersonToCreditsList(crew.SpecialEffects,       ParseCrewMember(tr)); break;
+              case "stunts":                                     AddPersonToCreditsList(crew.Stunts,               ParseCrewMember(tr)); break;
+              case "thanks":                                     AddPersonToCreditsList(crew.Thanks,               ParseCrewMember(tr)); break;
+              case "transportation department":                  AddPersonToCreditsList(crew.Transportation,       ParseCrewMember(tr)); break;
+              case "visual effects by":                          AddPersonToCreditsList(crew.VisualEffects,        ParseCrewMember(tr)); break;
+              case "written by":                                 AddPersonToCreditsList(crew.WrittenBy,            ParseCrewMember(tr)); break;
+              default:                                           AddPersonToCreditsList(crew.Others,               ParseCrewMember(tr)); break;
             }
           }
         }
@@ -2833,7 +2783,7 @@ namespace tar.IMDbScraper.Base {
       IEnumerable<HtmlNode>? companyList = companyCreditsNode?
         .Descendants("ul");
 
-      Companies companies = new Companies();
+      AllCompanies companies = new AllCompanies();
       foreach (HtmlNode ul in companyList.EmptyIfNull()) {
         string? category = ul
           .PreviousSibling?
@@ -2849,11 +2799,11 @@ namespace tar.IMDbScraper.Base {
 
         foreach (HtmlNode li in ul.Descendants("li").EmptyIfNull()) {
           switch (category) {
-            case "production companies": _addCompanyToCompanyCreditsList(companies.Production,     _parseCompany(li)); break;
-            case "distributors":         _addCompanyToCompanyCreditsList(companies.Distribution,   _parseCompany(li)); break;
-            case "special effects":      _addCompanyToCompanyCreditsList(companies.SpecialEffects, _parseCompany(li)); break;
-            case "other companies":      _addCompanyToCompanyCreditsList(companies.Miscellaneous,  _parseCompany(li)); break;
-            default:                     _addCompanyToCompanyCreditsList(companies.Miscellaneous,  _parseCompany(li)); break;
+            case "production companies": AddCompanyToCompanyCreditsList(companies.Production,     ParseCompany(li)); break;
+            case "distributors":         AddCompanyToCompanyCreditsList(companies.Distribution,   ParseCompany(li)); break;
+            case "special effects":      AddCompanyToCompanyCreditsList(companies.SpecialEffects, ParseCompany(li)); break;
+            case "other companies":      AddCompanyToCompanyCreditsList(companies.Miscellaneous,  ParseCompany(li)); break;
+            default:                     AddCompanyToCompanyCreditsList(companies.Miscellaneous,  ParseCompany(li)); break;
           }
         }
       }
@@ -2862,8 +2812,8 @@ namespace tar.IMDbScraper.Base {
       HtmlNode? storylineNode = rootNode?
         .SelectSingleNode("//section[@class=\"titlereference-section-storyline\"]");
 
-      List<Certification> certification = new List<Certification>();
-      List<Keyword>       keywords      = new List<Keyword>();
+      Certifications certification = new Certifications();
+      Keywords       keywords      = new Keywords();
 
       IEnumerable<HtmlNode>? storylineCertificationList = storylineNode?
         .Descendants("td")
@@ -2957,10 +2907,10 @@ namespace tar.IMDbScraper.Base {
       HtmlNode? detailsNode = rootNode?
         .SelectSingleNode("//section[@class=\"titlereference-section-additional-details\"]");
 
-      List<Country>      countries     = new List<Country>();
-      List<Language>     languages     = new List<Language>();
-      List<ExternalLink> officialSites = new List<ExternalLink>();
-      List<string>       soundMix      = new List<string>();
+      Countries     countries     = new Countries();
+      Languages     languages     = new Languages();
+      ExternalLinks officialSites = new ExternalLinks();
+      List<string>  soundMix      = new List<string>();
 
       string? aspectRatio = detailsNode?
         .Descendants("td")
@@ -3074,7 +3024,7 @@ namespace tar.IMDbScraper.Base {
       HtmlNode? boxOfficeNode = rootNode?
         .SelectSingleNode("//section[@class=\"titlereference-section-box-office\"]");
 
-      List<BoxOfficeEntry> boxOffice = new List<BoxOfficeEntry>();
+      BoxOfficeEntries boxOffice = new BoxOfficeEntries();
 
       IEnumerable<HtmlNode>? boxOfficeEntries = boxOfficeNode?
         .Descendants("tr");
@@ -3172,11 +3122,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse release dates ---------------------------------------------------------------
-    internal static List<ReleaseDate> ParseReleaseDates(List<JsonNode>? nodes) {
-      List<ReleaseDate> result = new List<ReleaseDate>();
+    internal static ReleaseDates ParseReleaseDates(List<JsonNode>? nodes) {
+      ReleaseDates result = new ReleaseDates();
 
       foreach (JsonNode? node in nodes.EmptyIfNull()) {
-        ReleaseDate? releaseDate = _parseReleaseDate(node);
+        ReleaseDate? releaseDate = ParseReleaseDate(node);
         if (releaseDate != null) {
           result.Add(releaseDate); 
         }
@@ -3186,8 +3136,8 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse seasons ---------------------------------------------------------------------
-    internal static List<Season> ParseSeasons(List<HtmlDocument> htmlDocuments) {
-      List<Season> result = new List<Season>();
+    internal static Seasons ParseSeasons(List<HtmlDocument> htmlDocuments) {
+      Seasons result = new Seasons();
 
       int season = 1;
       foreach (HtmlDocument htmlDocument in htmlDocuments) {
@@ -3205,7 +3155,7 @@ namespace tar.IMDbScraper.Base {
                    && x.Attributes["class"].Value.StartsWith("list_item")
         );
 
-        List<Episode> episodes = new List<Episode>();
+        Episodes episodes = new Episodes();
         foreach (HtmlNode node in list.EmptyIfNull()) {
           int? episodeNumber = Helper.GetInt(
             node
@@ -3311,18 +3261,18 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse soundtrack page -------------------------------------------------------------
-    internal static List<Song> ParseSoundtrackPage(HtmlDocument? htmlDocument) {
-      List<Song> result = new List<Song>();
+    internal static Songs ParseSoundtrackPage(HtmlDocument? htmlDocument) {
+      Songs result = new Songs();
 
-      JsonArray? jsonArray = _getContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
 
       foreach (JsonNode? node in jsonArray.EmptyIfNull()) {
-        string?    id    = node?["id"]?.ToString();
-        List<Text> notes = new List<Text>();
-        string?    title = node?["rowTitle"]?.ToString();
+        string? id    = node?["id"]?.ToString();
+        Texts   notes = new Texts();
+        string? title = node?["rowTitle"]?.ToString();
 
         JsonArray? list = node?["listContent"]?.AsArray();
         foreach (JsonNode? noteNode in list.EmptyIfNull()) {
@@ -3348,11 +3298,11 @@ namespace tar.IMDbScraper.Base {
     #endregion
     #region --- parse storyline -------------------------------------------------------------------
     internal static Storyline? ParseStoryline(List<JsonNode>? nodes) {
-      Certification?    certification = null;
-      List<Genre>       genres        = new List<Genre>();
-      List<Keyword>     keywords      = new List<Keyword>();
-      List<PlotSummary> plotSummaries = new List<PlotSummary>();
-      List<string>      taglines      = new List<string>();
+      Certification? certification = null;
+      Genres         genres        = new Genres();
+      Keywords       keywords      = new Keywords();
+      PlotSummaries  plotSummaries = new PlotSummaries();
+      List<string>   taglines      = new List<string>();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
         string path = node.GetPath();
@@ -3464,10 +3414,10 @@ namespace tar.IMDbScraper.Base {
           Name     = node["l"]?.ToString(),
           Notes    = node["s"]?.ToString(),
           Rank     = Helper.GetInt(node["rank"]?.ToString()),
-          Type     = node["q"]?.ToString() != null ? node["q"]?.ToString() : "Person",
+          Type     = (node["q"]?.ToString()) ?? "Person",
           URL      = node["q"]?.ToString() != null ? Helper.GetUrl(id, IdCategory.Title)
                                                    : Helper.GetUrl(id, IdCategory.Name),
-          Videos   = _parseSuggestionVideos(node["v"]?.AsArray()),
+          Videos   = ParseSuggestionVideos(node["v"]?.AsArray()),
           YearFrom = Helper.GetInt(node["y"]?.ToString()),
           YearTo   = Helper.GetInt(node["yr"]?.ToString().GetSubstringAfterOccurrence('-', 1))
         });
@@ -3477,10 +3427,10 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse taglines page ---------------------------------------------------------------
-    internal static List<Text> ParseTaglinesPage(HtmlDocument? htmlDocument) {
-      List<Text> result = new List<Text>();
+    internal static Texts ParseTaglinesPage(HtmlDocument? htmlDocument) {
+      Texts result = new Texts();
 
-      JsonArray? jsonArray = _getContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
@@ -3503,18 +3453,18 @@ namespace tar.IMDbScraper.Base {
         return null;
       }
 
-      List<TechnicalEntry> aspectRatios             = new List<TechnicalEntry>();
-      List<TechnicalEntry> cameras                  = new List<TechnicalEntry>();
-      List<TechnicalEntry> cinematographicProcesses = new List<TechnicalEntry>();
-      List<TechnicalEntry> colorations              = new List<TechnicalEntry>();
-      List<TechnicalEntry> filmLengths              = new List<TechnicalEntry>();
-      List<TechnicalEntry> laboratories             = new List<TechnicalEntry>();
-      List<TechnicalEntry> negativeFormats          = new List<TechnicalEntry>();
-      List<TechnicalEntry> printedFormats           = new List<TechnicalEntry>();
-      List<TechnicalEntry> runtimes                 = new List<TechnicalEntry>();
-      List<TechnicalEntry> soundMixes               = new List<TechnicalEntry>();
+      TechnicalEntries aspectRatios             = new TechnicalEntries();
+      TechnicalEntries cameras                  = new TechnicalEntries();
+      TechnicalEntries cinematographicProcesses = new TechnicalEntries();
+      TechnicalEntries colorations              = new TechnicalEntries();
+      TechnicalEntries filmLengths              = new TechnicalEntries();
+      TechnicalEntries laboratories             = new TechnicalEntries();
+      TechnicalEntries negativeFormats          = new TechnicalEntries();
+      TechnicalEntries printedFormats           = new TechnicalEntries();
+      TechnicalEntries runtimes                 = new TechnicalEntries();
+      TechnicalEntries soundMixes               = new TechnicalEntries();
 
-      JsonArray? jsonArray = _getContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
@@ -3581,11 +3531,11 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse trivia entries --------------------------------------------------------------
-    internal static List<TriviaEntry> ParseTriviaEntries(List<JsonNode>? nodes, List<JsonNode>? nodesWithoutSpoiler) {
-      List<TriviaEntry> result = new List<TriviaEntry>();
+    internal static TriviaEntries ParseTriviaEntries(List<JsonNode>? nodes, List<JsonNode>? nodesWithoutSpoiler) {
+      TriviaEntries result = new TriviaEntries();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
-        TriviaEntry? trivia = _parseTriviaEntry(node, nodesWithoutSpoiler);
+        TriviaEntry? trivia = ParseTriviaEntry(node, nodesWithoutSpoiler);
 
         if (trivia != null) {
           result.Add(trivia);
@@ -3596,8 +3546,8 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse user reviews ----------------------------------------------------------------
-    internal static List<UserReview> ParseUserReviews(List<HtmlDocument> htmlDocuments) {
-      List<UserReview> result = new List<UserReview>();
+    internal static UserReviews ParseUserReviews(List<HtmlDocument> htmlDocuments) {
+      UserReviews result = new UserReviews();
 
       foreach (HtmlDocument htmlDocument in htmlDocuments) {
         IEnumerable<HtmlNode>? list = htmlDocument

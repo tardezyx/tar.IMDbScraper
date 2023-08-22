@@ -8,7 +8,7 @@
 /// episodes           parsing      -
 /// externalreviews                 -                  all external reviews
 /// externalsites                   -                  all external sites
-/// faq                             parsing
+/// faq                             get json script
 /// fullcredits                     parsing
 /// goofs                           -                  all goofs
 /// keywords                        -                  all keywords
@@ -40,7 +40,7 @@
 ///   crazy credits                              crazycredits (-> json script)
 ///   external sites                             -                                    all external sites
 ///     official sites                             reference
-///   faq                                        faq
+///   faq                                        faq (-> json script)
 ///   goofs                                      -                                    all goofs
 ///   quotes                                                                          all quotes
 ///   soundtrack                                 soundtrack (-> json script)

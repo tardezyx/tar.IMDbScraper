@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace tar.IMDbScraper.Models {
+﻿namespace tar.IMDbScraper.Models {
   public class Song {
-    public string?    ID    { get; set; }
-    public List<Text> Notes { get; set; } = new List<Text>();
-    public string?    Title { get; set; }
+    public string? ID    { get; set; }
+    public Texts   Notes { get; set; } = new Texts();
+    public string? Title { get; set; }
   }
 }

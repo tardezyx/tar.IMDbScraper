@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace tar.IMDbScraper.Models {
+﻿namespace tar.IMDbScraper.Models {
   public class RatingsPage {
-    public List<Rating>          Histogram         { get; set; } = new List<Rating>();
-    public Rating?               Rating            { get; set; }
-    public List<RatingInCountry> RatingInCountries { get; set; } = new List<RatingInCountry>();
+    public Ratings           Histogram         { get; set; } = new Ratings();
+    public Rating?           Rating            { get; set; }
+    public RatingInCountries RatingInCountries { get; set; } = new RatingInCountries();
   }
 }

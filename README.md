@@ -66,6 +66,8 @@ This library can be used to scrape various IMDb title information via the static
   </ul>
 </details>
 
+You can also use the `IMDbTitle` class in which the title scraping is encapsuled.
+
 For results, see <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/Images">images</a>.
 
 ## Caution
@@ -89,8 +91,8 @@ It is recommended to not scrape all information at once and it also does not mak
 ## Usage
 
 <ul>
-  <li>Manual: reference tar.IMDbScraper.dll, <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a> (v1.11.48) and <a href="https://www.nuget.org/packages/System.Text.Json/">System.Text.Json</a> (v7.0.3)</li>
   <li>NuGet: use tar.IMDbScraper.x.x.x.nupkg</li>
-  <li>In order to check the performance and the general progress you can use Scraper.ProgressLog or/and an event on Scraper.ProgressUpdate</li>
-  <li>See <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> for detailed usage</li>
+  <li>Manual: reference tar.IMDbScraper.dll, <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a> (v1.11.48+) and <a href="https://www.nuget.org/packages/System.Text.Json/">System.Text.Json</a> (v7.0.3+)</li>
+  <li>In order to receive progress information during the scraping you can register the events Scraper.Updated and/or IMDbTitle.Updated. The complete log is stored in Scraper.ProgressLog.</li>
+  <li>For detailed usage, see <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> and the tar.IMDbExporter.zip file provided next to some releases.</li>
 </ul>

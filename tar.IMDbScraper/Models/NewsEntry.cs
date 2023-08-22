@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace tar.IMDbScraper.Models {
-  public class News {
+  public class NewsEntry {
     public string?   By        { get; set; }
     public DateTime? Date      { get; set; }
     public string?   ID        { get; set; }

@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Text;
 using tar.IMDbScraper.Base;
 using tar.IMDbScraper.Enums;
 using tar.IMDbScraper.Models;
@@ -147,7 +146,7 @@ namespace tar.IMDbScraper.UnitTests {
     public async Task FilmingDates() {
       string imdbID = "tt0944947"; // Game of Thrones (2011)
 
-      List<Dates> filmingDates = await Scraper.ScrapeAllFilmingDatesAsync(imdbID);
+      FilmingDates filmingDates = await Scraper.ScrapeAllFilmingDatesAsync(imdbID);
 
       Assert.IsTrue(
         filmingDates.Count >= 9,
@@ -160,7 +159,7 @@ namespace tar.IMDbScraper.UnitTests {
     public async Task Goofs() {
       string imdbID = "tt0468569"; // The Dark Knight (2008)
       
-      Goofs? goofs = await Scraper.ScrapeAllGoofsAsync(imdbID);
+      AllGoofs? goofs = await Scraper.ScrapeAllGoofsAsync(imdbID);
 
       Assert.IsTrue(
         goofs != null,
@@ -223,7 +222,7 @@ namespace tar.IMDbScraper.UnitTests {
     public async Task News() {
       string imdbID = "tt0092400"; // Married with Children (1987)
 
-      List<News> news = await Scraper.ScrapeAllNewsAsync(imdbID);
+      NewsEntries news = await Scraper.ScrapeAllNewsAsync(imdbID);
 
       Assert.IsTrue(
         news != null,
@@ -235,7 +234,7 @@ namespace tar.IMDbScraper.UnitTests {
         $"News are {news.Count} but should be at least 599!"
       );
 
-      News? newsEntry = news
+      NewsEntry? newsEntry = news
         .FirstOrDefault(x => x.ID == "ni60959360");
 
       Assert.IsTrue(
@@ -289,11 +288,7 @@ namespace tar.IMDbScraper.UnitTests {
       );
     }
     #endregion
-    #region --- scraper: progress update ----------------------------------------------------------
-    private void Scraper_ProgressUpdate(ProgressLog progressLog) {
-      // do something with the progress log
-    }
-    #endregion
+
     #region --- suggestions -----------------------------------------------------------------------
     [TestMethod]
     public async Task Suggestions() {
@@ -364,11 +359,43 @@ namespace tar.IMDbScraper.UnitTests {
       );
     }
     #endregion
-    #region --- whole title and debug -------------------------------------------------------------
+    #region --- via imdb title --------------------------------------------------------------------
     [TestMethod]
-    public async Task WholeTitleAndDebug() {
-      // the delegate Scraper.ProgessUpdate can be used to handle the updated progress info
-      Scraper.ProgressUpdate += Scraper_ProgressUpdate;
+    public async Task ZTesting() {
+      // via the settings you can select which title information should be scraped
+      IMDbTitleSettings settings = new() { 
+        AllAlternateTitles  = true,
+        AllAwards           = true,
+        AllSeasons          = true,
+        EpisodesCard        = true,
+        NextEpisode         = true,
+        RatingsPage         = true,
+        UserReviews         = true,
+        UserReviewsRequests = 3
+      };
+
+      string imdbID = "tt6905756";  // der pass
+
+      // create an instance of IMDbTitle with the provided settings
+      IMDbTitle iMDbTitle = new(imdbID, settings);
+
+      // register the updated event in order to get the condensed progress info during scraping
+      iMDbTitle.Updated += IMDbTitle_Updated;
+
+      // start the scraping whereby the settings are applied
+      await iMDbTitle.ScrapeAsync();
+
+      // unregister the updated event after scraping has been finished
+      iMDbTitle.Updated -= IMDbTitle_Updated;
+
+      Debugger.Break();
+    }
+    #endregion
+    #region --- via scraper -----------------------------------------------------------------------
+    [TestMethod]
+    public async Task ViaScraper() {
+      // the delegate Scraper.Updated can be used to handle the updated progress info
+      Scraper.Updated += Scraper_Updated;
 
       // the updated progress info is also stored here
       ConcurrentQueue<ProgressLog> progressLogs = Scraper.ProgressLogs;
@@ -398,24 +425,24 @@ namespace tar.IMDbScraper.UnitTests {
       //string imdbID = "tt11198330"; // house of the dragon
       //string imdbID = "tt13966962"; // echo (unreleased)
 
-      List<AlternateTitle>  allAlternateTitles  = await Scraper.ScrapeAllAlternateTitles(imdbID);
-      List<Award>           allAwards           = await Scraper.ScrapeAllAwardsAsync(imdbID);
-      Companies?            allCompanies        = await Scraper.ScrapeAllCompaniesAsync(imdbID);
-      Connections?          allConnections      = await Scraper.ScrapeAllConnectionsAsync(imdbID);
-      List<ExternalLink>    allExternalReviews  = await Scraper.ScrapeAllExternalReviewsAsync(imdbID);
-      ExternalSites?        allExternalSites    = await Scraper.ScrapeAllExternalSitesAsync(imdbID);
-      List<Dates>           allFilmingDates     = await Scraper.ScrapeAllFilmingDatesAsync(imdbID);
-      List<FilmingLocation> allFilmingLocations = await Scraper.ScrapeAllFilmingLocationsAsync(imdbID);
-      Goofs?                allGoofs            = await Scraper.ScrapeAllGoofsAsync(imdbID);
-      List<Keyword>         allKeywords         = await Scraper.ScrapeAllKeywordsAsync(imdbID);
-      List<PlotSummary>     allPlotSummaries    = await Scraper.ScrapeAllPlotSummariesAsync(imdbID); // check avengers: endgame
-      List<Quote>           allQuotes           = await Scraper.ScrapeAllQuotesAsync(imdbID);
-      List<ReleaseDate>     allReleaseDates     = await Scraper.ScrapeAllReleaseDatesAsync(imdbID);
-      List<Season>          allSeasons          = await Scraper.ScrapeAllSeasonsAsync(imdbID);
-      AllTopics?            allTopics           = await Scraper.ScrapeAllTopicsAsync(imdbID);
-      List<TriviaEntry>     allTriviaEntries    = await Scraper.ScrapeAllTriviaEntriesAsync(imdbID);
-      List<News>            newest500News       = await Scraper.ScrapeAllNewsAsync(imdbID, 2);
-      List<UserReview>      newest75UserReviews = await Scraper.ScrapeAllUserReviewsAsync(imdbID, 3);
+      AlternateTitles   allAlternateTitles  = await Scraper.ScrapeAllAlternateTitles(imdbID);
+      Awards            allAwards           = await Scraper.ScrapeAllAwardsAsync(imdbID);
+      AllCompanies?     allCompanies        = await Scraper.ScrapeAllCompaniesAsync(imdbID);
+      AllConnections?   allConnections      = await Scraper.ScrapeAllConnectionsAsync(imdbID);
+      ExternalLinks     allExternalReviews  = await Scraper.ScrapeAllExternalReviewsAsync(imdbID);
+      AllExternalLinks? allExternalSites    = await Scraper.ScrapeAllExternalSitesAsync(imdbID);
+      FilmingDates      allFilmingDates     = await Scraper.ScrapeAllFilmingDatesAsync(imdbID);
+      FilmingLocations  allFilmingLocations = await Scraper.ScrapeAllFilmingLocationsAsync(imdbID);
+      AllGoofs?         allGoofs            = await Scraper.ScrapeAllGoofsAsync(imdbID);
+      Keywords          allKeywords         = await Scraper.ScrapeAllKeywordsAsync(imdbID);
+      PlotSummaries     allPlotSummaries    = await Scraper.ScrapeAllPlotSummariesAsync(imdbID); // check avengers: endgame
+      Quotes            allQuotes           = await Scraper.ScrapeAllQuotesAsync(imdbID);
+      ReleaseDates      allReleaseDates     = await Scraper.ScrapeAllReleaseDatesAsync(imdbID);
+      Seasons           allSeasons          = await Scraper.ScrapeAllSeasonsAsync(imdbID);
+      AllTopics?        allTopics           = await Scraper.ScrapeAllTopicsAsync(imdbID);
+      TriviaEntries     allTriviaEntries    = await Scraper.ScrapeAllTriviaEntriesAsync(imdbID);
+      NewsEntries       newest500News       = await Scraper.ScrapeAllNewsAsync(imdbID, 2);
+      UserReviews       newest75UserReviews = await Scraper.ScrapeAllUserReviewsAsync(imdbID, 3);
 
       // Caution: some of the following methods provide incomplete data!
       // ------------------------------------------------------------------------------------------
@@ -433,23 +460,23 @@ namespace tar.IMDbScraper.UnitTests {
       // - The Reference Page has (as the Main Page) some info which is incomplete.
       // - The Storyline does provide some general plot entries but not all.
 
-      List<AlternateVersion> alternateVersions = await Scraper.ScrapeAlternateVersionsPageAsync(imdbID);
-      List<CrazyCredit>      crazyCredits      = await Scraper.ScrapeCrazyCreditsPageAsync(imdbID);
-      Crew?                  crew              = await Scraper.ScrapeFullCreditsPageAsync(imdbID);
-      List<CriticReview>     criticReviews     = await Scraper.ScrapeCriticReviewsPageAsync(imdbID);
-      EpisodesCard?          episodesCard      = await Scraper.ScrapeEpisodesCardAsync(imdbID);
-      FAQPage?               faqPage           = await Scraper.ScrapeFAQPageAsync(imdbID);
-      LocationsPage?         locationsPage     = await Scraper.ScrapeLocationsPageAsync(imdbID);
-      List<News>             mainNews          = await Scraper.ScrapeMainNewsAsync(imdbID);
-      MainPage?              mainPage          = await Scraper.ScrapeMainPageAsync(imdbID);
-      Episode?               nextEpisode       = await Scraper.ScrapeNextEpisodeAsync(imdbID);
-      ParentalGuidePage?     parentalGuidePage = await Scraper.ScrapeParentalGuidePageAsync(imdbID);
-      RatingsPage?           ratingsPage       = await Scraper.ScrapeRatingsPageAsync(imdbID);
-      ReferencePage?         referencePage     = await Scraper.ScrapeReferencePageAsync(imdbID);
-      List<Song>             soundtrack        = await Scraper.ScrapeSoundtrackPageAsync(imdbID);
-      Storyline?             storyline         = await Scraper.ScrapeStorylineAsync(imdbID);
-      List<Text>             taglines          = await Scraper.ScrapeTaglinesPageAsync(imdbID);
-      TechnicalPage?         technicalPage     = await Scraper.ScrapeTechnicalPageAsync(imdbID);
+      AlternateVersions  alternateVersions = await Scraper.ScrapeAlternateVersionsPageAsync(imdbID);
+      CrazyCredits       crazyCredits      = await Scraper.ScrapeCrazyCreditsPageAsync(imdbID);
+      Crew?              crew              = await Scraper.ScrapeFullCreditsPageAsync(imdbID);
+      CriticReviews      criticReviews     = await Scraper.ScrapeCriticReviewsPageAsync(imdbID);
+      EpisodesCard?      episodesCard      = await Scraper.ScrapeEpisodesCardAsync(imdbID);
+      FAQPage?           faqPage           = await Scraper.ScrapeFAQPageAsync(imdbID);
+      LocationsPage?     locationsPage     = await Scraper.ScrapeLocationsPageAsync(imdbID);
+      NewsEntries        mainNews          = await Scraper.ScrapeMainNewsAsync(imdbID);
+      MainPage?          mainPage          = await Scraper.ScrapeMainPageAsync(imdbID);
+      Episode?           nextEpisode       = await Scraper.ScrapeNextEpisodeAsync(imdbID);
+      ParentalGuidePage? parentalGuidePage = await Scraper.ScrapeParentalGuidePageAsync(imdbID);
+      RatingsPage?       ratingsPage       = await Scraper.ScrapeRatingsPageAsync(imdbID);
+      ReferencePage?     referencePage     = await Scraper.ScrapeReferencePageAsync(imdbID);
+      Songs              soundtrack        = await Scraper.ScrapeSoundtrackPageAsync(imdbID);
+      Storyline?         storyline         = await Scraper.ScrapeStorylineAsync(imdbID);
+      Texts              taglines          = await Scraper.ScrapeTaglinesPageAsync(imdbID);
+      TechnicalPage?     technicalPage     = await Scraper.ScrapeTechnicalPageAsync(imdbID);
 
       // It is recommended to not scrape all information at once and it also does not make any
       // sense to store everything in your own database which could not only be a legal issue
@@ -460,10 +487,10 @@ namespace tar.IMDbScraper.UnitTests {
       // to scrape all 37 seasons of "The Simpsons" without detailed information of each episode).
       
       // You can check the performance via the progress log as follows:
-      DateTime? begin            = progressLogs.FirstOrDefault()?.Begin;
-      DateTime? end              = progressLogs.LastOrDefault()?.End;
-      int?      numberOfRequests = progressLogs.Sum(x => x.TotalRequests);
-      TimeSpan? totalDuration    = end - begin;
+      DateTime? begin         = progressLogs.FirstOrDefault()?.Begin;
+      DateTime? end           = progressLogs.LastOrDefault()?.End;
+      int?      numberOfSteps = progressLogs.Sum(x => x.TotalSteps);
+      TimeSpan? totalDuration = end - begin;
 
       List<ProgressLog> progressSortedByDuration = progressLogs
         .OrderByDescending(x => x.Duration)
@@ -472,34 +499,16 @@ namespace tar.IMDbScraper.UnitTests {
       Debugger.Break();
     }
     #endregion
-    #region --- z ... testing ---------------------------------------------------------------------
-    [TestMethod]
-    public async Task ZTesting() {
-      var allConnections = await Scraper.ScrapeAllConnectionsAsync("tt0679174");
 
-      StringBuilder sb = new();
-
-      if (allConnections != null) {
-        foreach (var item in allConnections.FeaturedIn) {
-          sb.AppendLine(
-            string.Format(
-              "{0}|{1} ({2}) {3} {4} {5}",
-              item.AssociatedTitle?.URL,
-              item.AssociatedTitle?.LocalizedTitle,
-              item.AssociatedTitle?.YearFrom,
-              item.AssociatedTitle?.Type,
-              item.AssociatedTitle?.Series?.LocalizedTitle,
-              item.Notes?.PlainText
-            )
-          );
-        }
-      }
-
-      string result = sb.ToString();
-
-      Debugger.Break();
+    #region --- imdb title: updated ---------------------------------------------------------------
+    private void IMDbTitle_Updated(IMDbTitleProgress progress) {
+      // do something with the progress during scraping with IMDbTitle.ScrapeAsync()
     }
     #endregion
-
+    #region --- scraper: updated ------------------------------------------------------------------
+    private void Scraper_Updated(ProgressLog progressLog) {
+      // do something with the progress log during Scraper.Scrape...Async() or IMDbTitle.ScrapeAsync()
+    }
+    #endregion
   }
 }

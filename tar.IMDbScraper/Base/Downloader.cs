@@ -7,16 +7,17 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using tar.IMDbScraper.Enums;
 using tar.IMDbScraper.Extensions;
-using tar.IMDbScraper.Models;
 
 namespace tar.IMDbScraper.Base {
   internal static class Downloader {
-    private static List<SourceAjax> _sourcesAjax { get; set; } = new List<SourceAjax>();
-    private static List<SourceHtml> _sourcesHtml { get; set; } = new List<SourceHtml>();
-    private static List<SourceJson> _sourcesJson { get; set; } = new List<SourceJson>();
+    #region --- fields ----------------------------------------------------------------------------
+    private readonly static List<SourceAjax> _SourcesAjax = new List<SourceAjax>();
+    private readonly static List<SourceHtml> _SourcesHtml = new List<SourceHtml>();
+    private readonly static List<SourceJson> _SourcesJson = new List<SourceJson>();
+    #endregion
 
-    #region --- _build json query -----------------------------------------------------------------
-    private static string _buildJsonQuery(string imdbID, Operation operation, string parameter, string afterCursor) {
+    #region --- build json query ------------------------------------------------------------------
+    private static string BuildJsonQuery(string imdbID, Operation operation, string parameter, string afterCursor) {
       string? categories      = null;
       string? events          = null;
       bool    excludeSpoilers = false;
@@ -64,18 +65,18 @@ namespace tar.IMDbScraper.Base {
                + (categories.HasText() ?  "\"categories\":" + "[\"" + categories         + "\"]" : string.Empty)
                + (excludeSpoilers      ? ",\"spoilers\":"   +  "\"" + "EXCLUDE_SPOILERS" + "\""  : string.Empty)
              + "},"
-             + "\"first\":"                           + "250"                                  + ","
-             + "\"isAutoTranslationEnabled\":"        + "true"                                 + ","
-             + "\"originalTitleText\":"               + "true"                                 + ","
-             + "\"locale\":"                    +"\"" + CultureInfo.CurrentCulture.Name + "\"" + ","
-             + "\"episodesNowDateDay\":"              + today.Day.ToString()                   + ","
-             + "\"episodesNowDateMonth\":"            + today.Month.ToString()                 + ","
-             + "\"episodesNowDateYear\":"             + today.Year.ToString()                  + ","
-             + "\"episodesTomorrowDateDay\":"         + tomorrow.Day.ToString()                + ","
-             + "\"episodesTomorrowDateMonth\":"       + tomorrow.Month.ToString()              + ","
-             + "\"episodesTomorrowDateYear\":"        + tomorrow.Year.ToString()               + ","
-             + "\"mostRecentEpisodeAfterDateDay\":"   + twoWeeksAgo.Day.ToString()             + ","
-             + "\"mostRecentEpisodeAfterDateMonth\":" + twoWeeksAgo.Month.ToString()           + ","
+             + "\"first\":"                           + "250"                                    + ","
+             + "\"isAutoTranslationEnabled\":"        + "true"                                   + ","
+             + "\"originalTitleText\":"               + "true"                                   + ","
+             + "\"locale\":"                    +"\"" + CultureInfo.CurrentUICulture.Name + "\"" + ","
+             + "\"episodesNowDateDay\":"              + today.Day.ToString()                     + ","
+             + "\"episodesNowDateMonth\":"            + today.Month.ToString()                   + ","
+             + "\"episodesNowDateYear\":"             + today.Year.ToString()                    + ","
+             + "\"episodesTomorrowDateDay\":"         + tomorrow.Day.ToString()                  + ","
+             + "\"episodesTomorrowDateMonth\":"       + tomorrow.Month.ToString()                + ","
+             + "\"episodesTomorrowDateYear\":"        + tomorrow.Year.ToString()                 + ","
+             + "\"mostRecentEpisodeAfterDateDay\":"   + twoWeeksAgo.Day.ToString()               + ","
+             + "\"mostRecentEpisodeAfterDateMonth\":" + twoWeeksAgo.Month.ToString()             + ","
              + "\"mostRecentEpisodeAfterDateYear\":"  + twoWeeksAgo.Year.ToString()
            + "}"
            + "&extensions={"
@@ -86,9 +87,9 @@ namespace tar.IMDbScraper.Base {
            + "}";
     }
     #endregion
-    #region --- _download ajax -------------------------------------------------------- (async) ---
-    private static async Task<HtmlDocument?> _downloadAjaxAsync(string imdbID, string subUrl) {
-      SourceAjax sourceAjax = _sourcesAjax
+    #region --- download ajax --------------------------------------------------------- (async) ---
+    private static async Task<HtmlDocument?> DownloadAjaxAsync(string imdbID, string subUrl) {
+      SourceAjax sourceAjax = _SourcesAjax
         .FirstOrDefault(x => x.IMDbID == imdbID
                           && x.SubUrl == subUrl);
 
@@ -121,7 +122,7 @@ namespace tar.IMDbScraper.Base {
         }
       }
 
-      _sourcesAjax.Add(new SourceAjax() {
+      _SourcesAjax.Add(new SourceAjax() {
         HtmlDocument = result,
         IMDbID       = imdbID,
         SubUrl       = subUrl,
@@ -130,66 +131,25 @@ namespace tar.IMDbScraper.Base {
       return result;
     }
     #endregion
-    #region --- _progress start -------------------------------------------------------------------
-    private static void _progressStart(Guid guid, string description, int totalRequests) {
-      ProgressLog progressLog = new ProgressLog() {
-        Begin            = DateTime.Now,
-        Description      = description,
-        FinishedRequests = 0,
-        GUID             = guid,
-        Progress         = 0,
-        TotalRequests    = totalRequests
-      };
-
-      Scraper.ProgressLogs.Enqueue(progressLog);
-
-      if (Scraper.ProgressUpdate != null) {
-        Scraper.ProgressUpdate!(progressLog);
-      }
-    }
-
-    #endregion
-    #region --- _progress update ------------------------------------------------------------------
-    private static void _progressUpdate(Guid guid, int finishedRequests, int totalRequests) {
-      ProgressLog progressLog = Scraper
-        .ProgressLogs
-        .FirstOrDefault(x => x.GUID == guid);
-
-      DateTime? now = DateTime.Now;
-
-      progressLog.Duration         = finishedRequests == totalRequests
-                                   ? now - progressLog.Begin
-                                   : null;
-      progressLog.End              = finishedRequests == totalRequests
-                                   ? now
-                                   : null;
-      progressLog.FinishedRequests = finishedRequests;
-      progressLog.Progress         = (double)finishedRequests / (double)totalRequests;
-      progressLog.TotalRequests    = totalRequests;
-
-      if (Scraper.ProgressUpdate != null) {
-        Scraper.ProgressUpdate!(progressLog);
-      }
-    }
-    #endregion
 
     #region --- download ajax seasons ------------------------------------------------- (async) ---
-    internal static async Task<List<HtmlDocument>> DownloadAjaxSeasonsAsync(string imdbID) {
+    internal static async Task<List<HtmlDocument>> DownloadAjaxSeasonsAsync(
+      ProgressLog progressLog,
+      string      imdbID
+    ) {
       List<HtmlDocument> result = new List<HtmlDocument>();
 
-      Guid guid = Guid.NewGuid();
-      string description = $"AJAX request: seasons for {imdbID}";
-
-      _progressStart(
-        guid,
-        description,
+      ProgressLogStep progressLogStep = Scraper.StartProgressStep(
+        progressLog,
+        "AJAX request",
+        "Seasons",
         1
       );
 
       int actualSeason = 1;
       int lastSeason   = 1;
       while (actualSeason <= lastSeason) {
-        HtmlDocument? seasonDocument = await _downloadAjaxAsync(
+        HtmlDocument? seasonDocument = await DownloadAjaxAsync(
           imdbID,
           $"episodes/_ajax?season={actualSeason}"
         );
@@ -210,17 +170,20 @@ namespace tar.IMDbScraper.Base {
         }
 
         result.Add(seasonDocument);
-        actualSeason++;
 
-        _progressUpdate(
-          guid,
-          actualSeason - 1,
+        progressLogStep = Scraper.UpdateProgressStep(
+          progressLog,
+          progressLogStep,
+          actualSeason,
           lastSeason
         );
+
+        actualSeason++;
       }
 
-      _progressUpdate(
-        guid,
+      _ = Scraper.UpdateProgressStep(
+        progressLog,
+        progressLogStep,
         actualSeason,
         actualSeason
       );
@@ -229,18 +192,20 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- download ajax user reviews -------------------------------------------- (async) ---
-    internal static async Task<List<HtmlDocument>> DownloadAjaxUserReviewsAsync(string imdbID, int maxRequests = 0) {
+    internal static async Task<List<HtmlDocument>> DownloadAjaxUserReviewsAsync(
+      ProgressLog progressLog,
+      string      imdbID,
+      int         maxRequests = 0
+    ) {
       List<HtmlDocument> result = new List<HtmlDocument>();
 
-      Guid guid = Guid.NewGuid();
-      string description = $"AJAX request: user reviews for {imdbID}";
-
-      _progressStart(
-        guid,
-        description,
+      ProgressLogStep progressLogStep = Scraper.StartProgressStep(
+        progressLog,
+        "AJAX request",
+        "User Reviews",
         maxRequests > 0
-        ? maxRequests
-        : 1
+          ? maxRequests
+          : 1
       );
 
       string key = string.Empty;
@@ -249,7 +214,7 @@ namespace tar.IMDbScraper.Base {
       while (true) {
         numberOfRequests++;
 
-        HtmlDocument? reviewsDocument = await _downloadAjaxAsync(
+        HtmlDocument? reviewsDocument = await DownloadAjaxAsync(
           imdbID,
           $"reviews/_ajax?ref=undefined&paginationKey={key}"
         );
@@ -272,17 +237,19 @@ namespace tar.IMDbScraper.Base {
 
         key = newKey;
 
-        _progressUpdate(
-          guid,
+        progressLogStep = Scraper.UpdateProgressStep(
+          progressLog,
+          progressLogStep,
           numberOfRequests,
           maxRequests > 0
-          ? maxRequests
-          : numberOfRequests + 1
+            ? maxRequests
+            : numberOfRequests + 1
         );
       }
 
-      _progressUpdate(
-        guid,
+      _ = Scraper.UpdateProgressStep(
+        progressLog,
+        progressLogStep,
         numberOfRequests,
         numberOfRequests
       );
@@ -291,8 +258,12 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- download html --------------------------------------------------------- (async) ---
-    internal static async Task<HtmlDocument?> DownloadHTMLAsync(string imdbID, Page page) {
-      SourceHtml sourceHTML = _sourcesHtml
+    internal static async Task<HtmlDocument?> DownloadHTMLAsync(
+      ProgressLog progressLog,
+      string      imdbID,
+      Page        page
+    ) {
+      SourceHtml sourceHTML = _SourcesHtml
         .FirstOrDefault(x => x.ImdbId == imdbID
                           && x.Page   == page);
 
@@ -301,12 +272,11 @@ namespace tar.IMDbScraper.Base {
       }
 
       string url = $"{IdCategory.Title.Description()}{imdbID}/{page.Description()}";
-      Guid guid = Guid.NewGuid();
-      string description = $"HTML request: {url}";
 
-      _progressStart(
-        guid,
-        description,
+      ProgressLogStep progressLogStep = Scraper.StartProgressStep(
+        progressLog,
+        "HTML request",
+        url,
         1
       );
 
@@ -335,14 +305,15 @@ namespace tar.IMDbScraper.Base {
         }
       }
 
-      _sourcesHtml.Add(new SourceHtml() {
+      _SourcesHtml.Add(new SourceHtml() {
         HtmlDocument = result,
         Page         = page,
         ImdbId       = imdbID
       });
 
-      _progressUpdate(
-        guid,
+      progressLogStep = Scraper.UpdateProgressStep(
+        progressLog,
+        progressLogStep,
         1,
         1
       );
@@ -351,8 +322,14 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- download json --------------------------------------------------------- (async) ---
-    internal static async Task<List<JsonNode>?> DownloadJSONAsync(string imdbID, Operation operation, string parameter = "", int maxRequests = 0) {
-      SourceJson sourceJSON = _sourcesJson
+    internal static async Task<List<JsonNode>?> DownloadJSONAsync(
+      ProgressLog progressLog,
+      string      imdbID,
+      Operation   operation,
+      string      parameter   = "",
+      int         maxRequests = 0
+    ) {
+      SourceJson sourceJSON = _SourcesJson
         .FirstOrDefault(x => x.ImdbId    == imdbID
                           && x.Operation == operation
                           && x.Parameter == parameter);
@@ -361,17 +338,13 @@ namespace tar.IMDbScraper.Base {
         return sourceJSON.JsonNodes;
       }
 
-      Guid guid = Guid.NewGuid();
-      string description = $"JSON request: {operation.Description()} "
-                         + (parameter.HasText() ? $"({parameter}) " : null)
-                         + $"for {imdbID}";
-
-      _progressStart(
-        guid,
-        description,
+      ProgressLogStep progressLogStep = Scraper.StartProgressStep(
+        progressLog,
+        "JSON request",
+        parameter,
         maxRequests > 0
-        ? maxRequests
-        : 1
+          ? maxRequests
+          : 1
       );
 
       List<JsonNode> result           = new List<JsonNode>();
@@ -381,7 +354,7 @@ namespace tar.IMDbScraper.Base {
       while (true) {
         numberOfRequests++;
 
-        string     query    = _buildJsonQuery(imdbID, operation, parameter, endCursor);
+        string     query    = BuildJsonQuery(imdbID, operation, parameter, endCursor);
         JsonNode?  jsonNode = await WebClient.GetJSONAsync($"https://caching.graphql.imdb.com/{query}");
         JsonNode?  mainNode = Parser.GetJsonMainNode(jsonNode, operation);
         
@@ -394,24 +367,26 @@ namespace tar.IMDbScraper.Base {
           break;
         }
 
-        _progressUpdate(
-          guid,
+        progressLogStep = Scraper.UpdateProgressStep(
+          progressLog,
+          progressLogStep,
           numberOfRequests,
           maxRequests > 0
-          ? maxRequests
-          : numberOfRequests + 1
+            ? maxRequests
+            : numberOfRequests + 1
         );
       }
 
-      _sourcesJson.Add(new SourceJson() {
+      _SourcesJson.Add(new SourceJson() {
         ImdbId    = imdbID,
         Operation = operation,
         Parameter = parameter,
         JsonNodes = result
       });
-
-      _progressUpdate(
-        guid,
+      
+      progressLogStep = Scraper.UpdateProgressStep(
+        progressLog,
+        progressLogStep,
         numberOfRequests,
         numberOfRequests
       );
@@ -420,18 +395,21 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- download json suggestion ---------------------------------------------- (async) ---
-    internal static async Task<List<JsonNode>> DownloadJSONSuggestionAsync(string search, SuggestionsCategory category, bool includeVideos = false) {
+    internal static async Task<List<JsonNode>> DownloadJSONSuggestionAsync(
+      ProgressLog         progressLog,
+      string              search,
+      SuggestionsCategory category,
+      bool                includeVideos = false
+    ) {
       List<JsonNode> result = new List<JsonNode>();
 
       string url = $"https://v3.sg.media-imdb.com/suggestion/{category.Description()}/{search}.json"
                  + (includeVideos ? "?includeVideos=1" : string.Empty);
 
-      Guid guid = Guid.NewGuid();
-      string description = $"JSON request: {url}";
-
-      _progressStart(
-        guid,
-        description,
+      ProgressLogStep progressLogStep = Scraper.StartProgressStep(
+        progressLog,
+        "JSON request",
+        url,
         1
       );
 
@@ -439,8 +417,9 @@ namespace tar.IMDbScraper.Base {
       JsonArray? edges    = jsonNode?["d"]?.AsArray();
       result.AddRange(edges.EmptyIfNull().Select(x => x!));
 
-      _progressUpdate(
-        guid,
+      progressLogStep = Scraper.UpdateProgressStep(
+        progressLog,
+        progressLogStep,
         1,
         1
       );

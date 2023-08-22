@@ -2,7 +2,7 @@
 using System.Text.Json.Nodes;
 using tar.IMDbScraper.Enums;
 
-namespace tar.IMDbScraper.Models {
+namespace tar.IMDbScraper.Base {
   internal class SourceJson {
     public string          ImdbId    { get; set; } = string.Empty;
     public List<JsonNode>? JsonNodes { get; set; }

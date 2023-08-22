@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace tar.IMDbScraper.Models {
+﻿namespace tar.IMDbScraper.Models {
   public class FAQPage {
-    public List<FAQEntry> NoSpoilers { get; set; } = new List<FAQEntry>();
-    public List<FAQEntry> Spoilers   { get; set; } = new List<FAQEntry>();
+    public FAQEntries NoSpoilers { get; set; } = new FAQEntries();
+    public FAQEntries Spoilers   { get; set; } = new FAQEntries();
   }
 }

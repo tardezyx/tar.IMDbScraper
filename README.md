@@ -2,6 +2,8 @@
 
  - [X] C# .NET Standard v2.1
 
+![IMDbExporter](https://raw.githubusercontent.com/tardezyx/tar.IMDbScraper/main/Images/IMDbExporter.png)
+
 ## Function
 
 This library can be used to scrape various IMDb title information via the static `Scraper` class:

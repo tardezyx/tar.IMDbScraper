@@ -364,12 +364,12 @@ namespace tar.IMDbScraper.UnitTests {
     public async Task ZTesting() {
       // via the settings you can select which title information should be scraped
       IMDbTitleSettings settings = new() { 
-        AllAlternateTitles  = true,
-        AllAwards           = true,
-        AllSeasons          = true,
+        AlternateTitles     = true,
+        Awards              = true,
         EpisodesCard        = true,
         NextEpisode         = true,
         RatingsPage         = true,
+        Seasons             = true,
         UserReviews         = true,
         UserReviewsRequests = 3
       };

@@ -1210,8 +1210,8 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse awards page -----------------------------------------------------------------
-    internal static List<AwardsEvent> ParseAwardsPage(HtmlDocument? htmlDocument) {
-      List<AwardsEvent> result = new List<AwardsEvent>();
+    internal static AwardsEvents ParseAwardsPage(HtmlDocument? htmlDocument) {
+      AwardsEvents result = new AwardsEvents();
 
       HtmlNode? optionNode = htmlDocument?
         .DocumentNode
@@ -3402,8 +3402,8 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- parse suggestions -----------------------------------------------------------------
-    internal static List<Suggestion> ParseSuggestions(List<JsonNode> nodes) {
-      List<Suggestion> result = new List<Suggestion>();
+    internal static Suggestions ParseSuggestions(List<JsonNode> nodes) {
+      Suggestions result = new Suggestions();
 
       foreach (JsonNode node in nodes.EmptyIfNull()) {
         string? id     = node["id"]?.ToString();

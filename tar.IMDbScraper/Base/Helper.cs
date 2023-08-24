@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Globalization;
+using System.Text;
 using System.Web;
 using tar.IMDbScraper.Enums;
 using tar.IMDbScraper.Extensions;
@@ -27,6 +28,29 @@ namespace tar.IMDbScraper.Base {
       }
 
       return null;
+    }
+    #endregion
+    #region --- adjust enum description -----------------------------------------------------------
+    // replace '_' with space and capitalize the first letter of each word
+    internal static string AdjustEnumDescription(string? description) {
+      if (description.IsNullOrEmpty()) { 
+        return string.Empty;
+      }
+
+      if (description.Contains('_')) {
+        StringBuilder stringBuilder = new StringBuilder();
+        string[] split = description.Split('_');
+
+        foreach (string word in split) {
+          stringBuilder.Append(
+            $"{word[..1].ToUpper()}{word[1..]} "
+          );
+        }
+
+        return stringBuilder.ToString().TrimEnd();
+      }
+
+      return $"{description[..1].ToUpper()}{description[1..]}";
     }
     #endregion
     #region --- get datetime ----------------------------------------------------------------------

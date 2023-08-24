@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
+using tar.IMDbScraper.Extensions;
 using tar.IMDbScraper.Models;
 
 namespace tar.IMDbScraper.Base {
@@ -33,45 +36,64 @@ namespace tar.IMDbScraper.Base {
     private int _Steps;
     #endregion
     #region --- properties ------------------------------------------------------------------------
-    public AlternateTitles    AllAlternateTitles  { get; set; } = new AlternateTitles();
-    public Awards             AllAwards           { get; set; } = new Awards();
-    public AllCompanies?      AllCompanies        { get; set; }
-    public AllConnections?    AllConnections      { get; set; }
-    public ExternalLinks      AllExternalReviews  { get; set; } = new ExternalLinks();
-    public AllExternalLinks?  AllExternalSites    { get; set; }
-    public FilmingDates       AllFilmingDates     { get; set; } = new FilmingDates();
-    public FilmingLocations   AllFilmingLocations { get; set; } = new FilmingLocations();
-    public AllGoofs?          AllGoofs            { get; set; }
-    public Keywords           AllKeywords         { get; set; } = new Keywords();
-    public PlotSummaries      AllPlotSummaries    { get; set; } = new PlotSummaries();
-    public Quotes             AllQuotes           { get; set; } = new Quotes();
-    public ReleaseDates       AllReleaseDates     { get; set; } = new ReleaseDates();
-    public Seasons            AllSeasons          { get; set; } = new Seasons();
-    public AllTopics?         AllTopics           { get; set; }
-    public TriviaEntries      AllTriviaEntries    { get; set; } = new TriviaEntries();
-    public AlternateVersions  AlternateVersions   { get; set; } = new AlternateVersions();
-    public CrazyCredits       CrazyCredits        { get; set; } = new CrazyCredits();
-    public Crew?              Crew                { get; set; }
-    public CriticReviews      CriticReviews       { get; set; } = new CriticReviews();
-    public EpisodesCard?      EpisodesCard        { get; set; }
-    public FAQPage?           FAQPage             { get; set; }
-    public string             ID                  { get; set; }
-    public LocationsPage?     LocationsPage       { get; set; }
-    public NewsEntries        MainNews            { get; set; } = new NewsEntries();
-    public MainPage?          MainPage            { get; set; }
-    public NewsEntries        News                { get; set; } = new NewsEntries();
-    public Episode?           NextEpisode         { get; set; }
-    public ParentalGuidePage? ParentalGuidePage   { get; set; }
-    public RatingsPage?       RatingsPage         { get; set; }
-    public ReferencePage?     ReferencePage       { get; set; }
-    public IMDbTitleSettings  Settings            { get; set; }
-    public Songs              Soundtrack          { get; set; } = new Songs();
-    public Storyline?         Storyline           { get; set; }
-    public TechnicalPage?     TechnicalPage       { get; set; }
-    public Texts              Taglines            { get; set; } = new Texts();
-    public UserReviews        UserReviews         { get; set; } = new UserReviews();
+    public AlternateTitles    AlternateTitles   { get; set; } = new AlternateTitles();
+    public AlternateVersions  AlternateVersions { get; set; } = new AlternateVersions();
+    public Awards             Awards            { get; set; } = new Awards();
+    public AllCompanies?      Companies         { get; set; }
+    public AllConnections?    Connections       { get; set; }
+    public CrazyCredits       CrazyCredits      { get; set; } = new CrazyCredits();
+    public Crew?              Crew              { get; set; }
+    public CriticReviews      CriticReviews     { get; set; } = new CriticReviews();
+    public EpisodesCard?      EpisodesCard      { get; set; }
+    public ExternalLinks      ExternalReviews   { get; set; } = new ExternalLinks();
+    public AllExternalLinks?  ExternalSites     { get; set; }
+    public FAQPage?           FAQPage           { get; set; }
+    public FilmingDates       FilmingDates      { get; set; } = new FilmingDates();
+    public FilmingLocations   FilmingLocations  { get; set; } = new FilmingLocations();
+    public AllGoofs?          Goofs             { get; set; }
+    public string             ID                { get; set; }
+    public Keywords           Keywords          { get; set; } = new Keywords();
+    public LocationsPage?     LocationsPage     { get; set; }
+    public NewsEntries        MainNews          { get; set; } = new NewsEntries();
+    public MainPage?          MainPage          { get; set; }
+    public NewsEntries        News              { get; set; } = new NewsEntries();
+    public Episode?           NextEpisode       { get; set; }
+    public ParentalGuidePage? ParentalGuidePage { get; set; }
+    public PlotSummaries      PlotSummaries     { get; set; } = new PlotSummaries();
+    public Quotes             Quotes            { get; set; } = new Quotes();
+    public RatingsPage?       RatingsPage       { get; set; }
+    public ReferencePage?     ReferencePage     { get; set; }
+    public ReleaseDates       ReleaseDates      { get; set; } = new ReleaseDates();
+    public Seasons            Seasons           { get; set; } = new Seasons();
+    public IMDbTitleSettings  Settings          { get; set; }
+    public Songs              Soundtrack        { get; set; } = new Songs();
+    public Storyline?         Storyline         { get; set; }
+    public Texts              Taglines          { get; set; } = new Texts();
+    public TechnicalPage?     TechnicalPage     { get; set; }
+    public AllTopics?         Topics            { get; set; }
+    public TriviaEntries      TriviaEntries     { get; set; } = new TriviaEntries();
+    public UserReviews        UserReviews       { get; set; } = new UserReviews();
     #endregion
 
+    #region --- get json --------------------------------------------------------------------------
+    /// <summary>
+    /// This method returns the serialized JSON string of the instance.
+    /// </summary>
+    /// <returns></returns>
+    public string GetJson() {
+      JsonSerializerOptions jsonOptions = new JsonSerializerOptions() {
+        TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+          .Exclude(
+            typeof(IMDbTitle),
+            nameof(Settings)
+          ),
+        PropertyNameCaseInsensitive = true,
+        WriteIndented = true
+      };
+
+      return JsonSerializer.Serialize(this, jsonOptions);
+    }
+    #endregion
     #region --- scrape ----------------------------------------------------------------------------
     /// <summary>
     /// This method scrapes every information according to the corresponding <see cref="IMDbTitleSettings"/>.
@@ -88,41 +110,41 @@ namespace tar.IMDbScraper.Base {
 
       Scraper.Updated += Scraper_Updated;
 
-      if (Settings.AllAlternateTitles ) { AllAlternateTitles  = await Scraper.ScrapeAllAlternateTitles(ID); }
-      if (Settings.AllAwards          ) { AllAwards           = await Scraper.ScrapeAllAwardsAsync(ID); }
-      if (Settings.AllCompanies       ) { AllCompanies        = await Scraper.ScrapeAllCompaniesAsync(ID); }
-      if (Settings.AllConnections     ) { AllConnections      = await Scraper.ScrapeAllConnectionsAsync(ID); }
-      if (Settings.AllExternalReviews ) { AllExternalReviews  = await Scraper.ScrapeAllExternalReviewsAsync(ID); }
-      if (Settings.AllExternalSites   ) { AllExternalSites    = await Scraper.ScrapeAllExternalSitesAsync(ID); }
-      if (Settings.AllFilmingDates    ) { AllFilmingDates     = await Scraper.ScrapeAllFilmingDatesAsync(ID); }
-      if (Settings.AllFilmingLocations) { AllFilmingLocations = await Scraper.ScrapeAllFilmingLocationsAsync(ID); }
-      if (Settings.AllGoofs           ) { AllGoofs            = await Scraper.ScrapeAllGoofsAsync(ID); }
-      if (Settings.AllKeywords        ) { AllKeywords         = await Scraper.ScrapeAllKeywordsAsync(ID); }
-      if (Settings.AllPlotSummaries   ) { AllPlotSummaries    = await Scraper.ScrapeAllPlotSummariesAsync(ID); }
-      if (Settings.AllQuotes          ) { AllQuotes           = await Scraper.ScrapeAllQuotesAsync(ID); }
-      if (Settings.AllReleaseDates    ) { AllReleaseDates     = await Scraper.ScrapeAllReleaseDatesAsync(ID); }
-      if (Settings.AllSeasons         ) { AllSeasons          = await Scraper.ScrapeAllSeasonsAsync(ID); }
-      if (Settings.AllTopics          ) { AllTopics           = await Scraper.ScrapeAllTopicsAsync(ID); }
-      if (Settings.AllTriviaEntries   ) { AllTriviaEntries    = await Scraper.ScrapeAllTriviaEntriesAsync(ID); }
-      if (Settings.AlternateVersions  ) { AlternateVersions   = await Scraper.ScrapeAlternateVersionsPageAsync(ID); }
-      if (Settings.CrazyCredits       ) { CrazyCredits        = await Scraper.ScrapeCrazyCreditsPageAsync(ID); }
-      if (Settings.Crew               ) { Crew                = await Scraper.ScrapeFullCreditsPageAsync(ID); }
-      if (Settings.CriticReviews      ) { CriticReviews       = await Scraper.ScrapeCriticReviewsPageAsync(ID); }
-      if (Settings.EpisodesCard       ) { EpisodesCard        = await Scraper.ScrapeEpisodesCardAsync(ID); }
-      if (Settings.FAQPage            ) { FAQPage             = await Scraper.ScrapeFAQPageAsync(ID); }
-      if (Settings.LocationsPage      ) { LocationsPage       = await Scraper.ScrapeLocationsPageAsync(ID); }
-      if (Settings.MainNews           ) { MainNews            = await Scraper.ScrapeMainNewsAsync(ID); }
-      if (Settings.MainPage           ) { MainPage            = await Scraper.ScrapeMainPageAsync(ID); }
-      if (Settings.News               ) { News                = await Scraper.ScrapeAllNewsAsync(ID, Settings.NewsRequests); }
-      if (Settings.NextEpisode        ) { NextEpisode         = await Scraper.ScrapeNextEpisodeAsync(ID); }
-      if (Settings.ParentalGuidePage  ) { ParentalGuidePage   = await Scraper.ScrapeParentalGuidePageAsync(ID); }
-      if (Settings.RatingsPage        ) { RatingsPage         = await Scraper.ScrapeRatingsPageAsync(ID); }
-      if (Settings.ReferencePage      ) { ReferencePage       = await Scraper.ScrapeReferencePageAsync(ID); }
-      if (Settings.Soundtrack         ) { Soundtrack          = await Scraper.ScrapeSoundtrackPageAsync(ID); }
-      if (Settings.Storyline          ) { Storyline           = await Scraper.ScrapeStorylineAsync(ID); }
-      if (Settings.TechnicalPage      ) { TechnicalPage       = await Scraper.ScrapeTechnicalPageAsync(ID); }
-      if (Settings.Taglines           ) { Taglines            = await Scraper.ScrapeTaglinesPageAsync(ID); }
-      if (Settings.UserReviews        ) { UserReviews         = await Scraper.ScrapeAllUserReviewsAsync(ID, Settings.UserReviewsRequests); }
+      if (Settings.AlternateTitles)   { AlternateTitles   = await Scraper.ScrapeAllAlternateTitles(ID); }
+      if (Settings.AlternateVersions) { AlternateVersions = await Scraper.ScrapeAlternateVersionsPageAsync(ID); }
+      if (Settings.Awards)            { Awards            = await Scraper.ScrapeAllAwardsAsync(ID); }
+      if (Settings.Companies)         { Companies         = await Scraper.ScrapeAllCompaniesAsync(ID); }
+      if (Settings.Connections)       { Connections       = await Scraper.ScrapeAllConnectionsAsync(ID); }
+      if (Settings.CrazyCredits)      { CrazyCredits      = await Scraper.ScrapeCrazyCreditsPageAsync(ID); }
+      if (Settings.Crew)              { Crew              = await Scraper.ScrapeFullCreditsPageAsync(ID); }
+      if (Settings.CriticReviews)     { CriticReviews     = await Scraper.ScrapeCriticReviewsPageAsync(ID); }
+      if (Settings.EpisodesCard)      { EpisodesCard      = await Scraper.ScrapeEpisodesCardAsync(ID); }
+      if (Settings.ExternalReviews)   { ExternalReviews   = await Scraper.ScrapeAllExternalReviewsAsync(ID); }
+      if (Settings.ExternalSites)     { ExternalSites     = await Scraper.ScrapeAllExternalSitesAsync(ID); }
+      if (Settings.FAQPage)           { FAQPage           = await Scraper.ScrapeFAQPageAsync(ID); }
+      if (Settings.FilmingDates)      { FilmingDates      = await Scraper.ScrapeAllFilmingDatesAsync(ID); }
+      if (Settings.FilmingLocations)  { FilmingLocations  = await Scraper.ScrapeAllFilmingLocationsAsync(ID); }
+      if (Settings.Goofs)             { Goofs             = await Scraper.ScrapeAllGoofsAsync(ID); }
+      if (Settings.Keywords)          { Keywords          = await Scraper.ScrapeAllKeywordsAsync(ID); }
+      if (Settings.LocationsPage)     { LocationsPage     = await Scraper.ScrapeLocationsPageAsync(ID); }
+      if (Settings.MainNews)          { MainNews          = await Scraper.ScrapeMainNewsAsync(ID); }
+      if (Settings.MainPage)          { MainPage          = await Scraper.ScrapeMainPageAsync(ID); }
+      if (Settings.News)              { News              = await Scraper.ScrapeAllNewsAsync(ID, Settings.NewsRequests); }
+      if (Settings.NextEpisode)       { NextEpisode       = await Scraper.ScrapeNextEpisodeAsync(ID); }
+      if (Settings.ParentalGuidePage) { ParentalGuidePage = await Scraper.ScrapeParentalGuidePageAsync(ID); }
+      if (Settings.PlotSummaries)     { PlotSummaries     = await Scraper.ScrapeAllPlotSummariesAsync(ID); }
+      if (Settings.Quotes)            { Quotes            = await Scraper.ScrapeAllQuotesAsync(ID); }
+      if (Settings.RatingsPage)       { RatingsPage       = await Scraper.ScrapeRatingsPageAsync(ID); }
+      if (Settings.ReferencePage)     { ReferencePage     = await Scraper.ScrapeReferencePageAsync(ID); }
+      if (Settings.ReleaseDates)      { ReleaseDates      = await Scraper.ScrapeAllReleaseDatesAsync(ID); }
+      if (Settings.Seasons)           { Seasons           = await Scraper.ScrapeAllSeasonsAsync(ID); }
+      if (Settings.Soundtrack)        { Soundtrack        = await Scraper.ScrapeSoundtrackPageAsync(ID); }
+      if (Settings.Storyline)         { Storyline         = await Scraper.ScrapeStorylineAsync(ID); }
+      if (Settings.Taglines)          { Taglines          = await Scraper.ScrapeTaglinesPageAsync(ID); }
+      if (Settings.TechnicalPage)     { TechnicalPage     = await Scraper.ScrapeTechnicalPageAsync(ID); }
+      if (Settings.Topics)            { Topics            = await Scraper.ScrapeAllTopicsAsync(ID); }
+      if (Settings.TriviaEntries)     { TriviaEntries     = await Scraper.ScrapeAllTriviaEntriesAsync(ID); }
+      if (Settings.UserReviews)       { UserReviews       = await Scraper.ScrapeAllUserReviewsAsync(ID, Settings.UserReviewsRequests); }
 
       Scraper.Updated -= Scraper_Updated;
     }
@@ -133,10 +155,11 @@ namespace tar.IMDbScraper.Base {
       double finishedStepsProgress = _CurrentStep * singleStepProgress;
       double currentStepProgress   = progressLog.Progress * singleStepProgress / 100;
 
-      IMDbTitleProgress iMDbTitleProgress = new IMDbTitleProgress {
-        Description = progressLog.CurrentStepDescription.Length > 0
-          ? $"{progressLog.Description} ({progressLog.FinishedSteps}/{progressLog.TotalSteps}): {progressLog.CurrentStepDescription}"
-          : $"{progressLog.Description} ({progressLog.FinishedSteps}/{progressLog.TotalSteps})",
+      IMDbTitleProgress iMDbTitleProgress = new IMDbTitleProgress() {
+        Description = $"{_CurrentStep}/{_Steps}: {progressLog.Description} ({progressLog.FinishedSteps}/{progressLog.TotalSteps})"
+          + (progressLog.CurrentStepDescription.Length > 0
+            ? $": {progressLog.CurrentStepDescription}"
+            : string.Empty),
         Value = Math.Clamp(
           (int)(finishedStepsProgress + currentStepProgress),
           0,

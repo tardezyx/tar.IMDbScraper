@@ -150,7 +150,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<AlternateTitles> ScrapeAllAlternateTitles(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.AlternateTitles.Description(),
+        "All Alternate Titles",
         1
       );
 
@@ -221,7 +221,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<List<AwardsEvent>> ScrapeAllAwardsEventsAsync() {
       ProgressLog progressLog = StartProgress(
         string.Empty,
-        Operation.AllAwardsEvents.Description(),
+        "All Awards Events",
         1
       );
 
@@ -361,7 +361,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<ExternalLinks> ScrapeAllExternalReviewsAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.ExternalReviews.Description(),
+        "All External Reviews",
         1
       );
 
@@ -431,7 +431,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<FilmingDates> ScrapeAllFilmingDatesAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.FilmingDates.Description(),
+        "All Filming Dates",
         1
       );
 
@@ -453,7 +453,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<FilmingLocations> ScrapeAllFilmingLocationsAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.FilmingLocations.Description(),
+        "All Filming Locations",
         1
       );
 
@@ -546,7 +546,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<Keywords> ScrapeAllKeywordsAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.Keywords.Description(),
+        "All Keywords",
         1
       );
 
@@ -570,7 +570,9 @@ namespace tar.IMDbScraper.Base {
     public static async Task<NewsEntries> ScrapeAllNewsAsync(string imdbID, int maxRequests = 0) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        "All News",
+        maxRequests > 0
+          ? $"Recent {maxRequests * 250} News"
+          : "All News",
         maxRequests > 0
           ? maxRequests
           : 1
@@ -596,7 +598,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<PlotSummaries> ScrapeAllPlotSummariesAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.PlotSummaries.Description(),
+        "All Plot Summaries",
         1
       );
 
@@ -618,7 +620,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<Quotes> ScrapeAllQuotesAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.Quotes.Description(),
+        "All Quotes",
         1
       );
 
@@ -640,7 +642,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<ReleaseDates> ScrapeAllReleaseDatesAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.ReleaseDates.Description(),
+        "All Release Dates",
         1
       );
 
@@ -684,7 +686,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<AllTopics?> ScrapeAllTopicsAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.AllTopics.Description(),
+        "All Topics",
         1
       );
 
@@ -706,7 +708,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<TriviaEntries> ScrapeAllTriviaEntriesAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.Trivia.Description(),
+        "All Trivia Entries",
         2
       );
 
@@ -737,7 +739,9 @@ namespace tar.IMDbScraper.Base {
     public static async Task<UserReviews> ScrapeAllUserReviewsAsync(string imdbID, int maxRequests = 0) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        "All User Reviews",
+        maxRequests > 0
+          ? $"Recent {maxRequests * 25} User Reviews"
+          : "All User Reviews",
         maxRequests > 0
           ? maxRequests
           : 1
@@ -762,7 +766,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<AlternateVersions> ScrapeAlternateVersionsPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.AlternateVersions.Description(),
+        "Alternate Versions",
         1
       );
 
@@ -786,11 +790,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<List<Award>> ScrapeAwardsViaEnumAsync(string imdbID, AwardsEventID awardsEventID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        string.Format(
-          "{0}: Event {1}",
-          Operation.Awards.Description(),
-          awardsEventID.Description()
-        ),
+        $"Awards: Event {awardsEventID.Description()}",
         1
       );
 
@@ -816,11 +816,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<List<Award>> ScrapeAwardsViaStringAsync(string imdbID, string awardsEventID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        string.Format(
-          "{0}: Event {1}",
-          Operation.Awards.Description(),
-          awardsEventID
-        ),
+        $"Awards: Event {awardsEventID}",
         1
       );
 
@@ -843,10 +839,10 @@ namespace tar.IMDbScraper.Base {
     /// </summary>
     /// <param name="imdbID">The ID of an IMDb title.</param>
     /// <returns>A list of all relevant awards events with their number of awards.</returns>
-    public static async Task<List<AwardsEvent>> ScrapeAwardsPageAsync(string imdbID) {
+    public static async Task<AwardsEvents> ScrapeAwardsPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.Awards.Description(),
+        "Awards Events",
         1
       );
 
@@ -869,11 +865,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<List<Company>> ScrapeCompaniesAsync(string imdbID, CompanyCategory category) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        string.Format(
-          "{0}: {1}",
-          Operation.CompanyCredits.Description(),
-          category.Description()
-        ),
+        $"Companies: {Helper.AdjustEnumDescription(category.Description())}",
         1
       );
 
@@ -898,11 +890,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<List<Connection>> ScrapeConnectionsAsync(string imdbID, ConnectionsCategory category) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        string.Format(
-          "{0}: {1}",
-          Operation.Connections.Description(),
-          category.Description()
-        ),
+        $"Connections: {Helper.AdjustEnumDescription(category.Description())}",
         1
       );
 
@@ -927,7 +915,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<CrazyCredits> ScrapeCrazyCreditsPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.CrazyCredits.Description(),
+        "Crazy Credits",
         1
       );
 
@@ -942,15 +930,15 @@ namespace tar.IMDbScraper.Base {
     #endregion
     #region --- scrape critic reviews page -------------------------------------------- (async) ---
     /// <summary>
-    /// Scrapes a list of all critic reviews of an IMDb title.
+    /// Scrapes a list of up to 10 metacritic reviews of an IMDb title.
     /// <br><b>Caution:</b> Uses HTML request.</br>
     /// </summary>
     /// <param name="imdbID">The ID of an IMDb title.</param>
-    /// <returns>A list of all critic reviews.</returns>
+    /// <returns>A list of up to 10 metacritic reviews.</returns>
     public static async Task<CriticReviews> ScrapeCriticReviewsPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.CriticReviews.Description(),
+        "Critic Reviews",
         1
       );
 
@@ -972,7 +960,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<EpisodesCard?> ScrapeEpisodesCardAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.EpisodesCard.Description(),
+        "Episodes Card",
         1
       );
 
@@ -995,11 +983,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<List<ExternalLink>> ScrapeExternalSitesAsync(string imdbID, ExternalSitesCategory category) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        string.Format(
-          "{0}: {1}",
-          Operation.ExternalSites.Description(),
-          category.Description()
-        ),
+        $"External Sites: {Helper.AdjustEnumDescription(category.Description())}",
         1
       );
 
@@ -1024,7 +1008,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<FAQPage?> ScrapeFAQPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.FAQ.Description(),
+        "FAQ Page",
         1
       );
 
@@ -1047,7 +1031,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<Crew?> ScrapeFullCreditsPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.FullCredits.Description(),
+        "Crew",
         1
       );
 
@@ -1070,11 +1054,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<List<Goof>> ScrapeGoofsAsync(string imdbID, GoofsCategory category) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        string.Format(
-          "{0}: {1}",
-          Operation.Goofs.Description(),
-          category.Description()
-        ),
+        $"Goofs: {Helper.AdjustEnumDescription(category.Description())}",
         2
       );
 
@@ -1107,7 +1087,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<LocationsPage?> ScrapeLocationsPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.Locations.Description(),
+        "Locations Page",
         1
       );
 
@@ -1130,7 +1110,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<NewsEntries> ScrapeMainNewsAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.MainNews.Description(),
+        "Main News",
         1
       );
 
@@ -1153,7 +1133,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<MainPage?> ScrapeMainPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.Main.Description(),
+        "Main Page",
         1
       );
 
@@ -1175,7 +1155,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<Episode?> ScrapeNextEpisodeAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.NextEpisode.Description(),
+        "Next Episode",
         1
       );
 
@@ -1204,7 +1184,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<ParentalGuidePage?> ScrapeParentalGuidePageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.ParentalGuide.Description(),
+        "Parental Guide Page",
         1
       );
 
@@ -1227,7 +1207,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<RatingsPage?> ScrapeRatingsPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.Ratings.Description(),
+        "Ratings Page",
         1
       );
 
@@ -1250,7 +1230,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<ReferencePage?> ScrapeReferencePageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.Reference.Description(),
+        "Reference Page",
         1
       );
 
@@ -1274,7 +1254,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<Songs> ScrapeSoundtrackPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.Soundtrack.Description(),
+        "Soundtrack",
         1
       );
 
@@ -1296,7 +1276,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<Storyline?> ScrapeStorylineAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Operation.Storyline.Description(),
+        "Storyline",
         1
       );
 
@@ -1317,10 +1297,10 @@ namespace tar.IMDbScraper.Base {
     /// <param name="category">The category via <see cref="SuggestionsCategory"/></param>
     /// <param name="includeVideos">Get corresponding video links</param>
     /// <returns>The suggestions result of imdb.com.</returns>
-    public static async Task<List<Suggestion>> ScrapeSuggestionsAsync(string input, SuggestionsCategory category, bool includeVideos) {
+    public static async Task<Suggestions> ScrapeSuggestionsAsync(string input, SuggestionsCategory category, bool includeVideos) {
       ProgressLog progressLog = StartProgress(
         string.Empty,
-        "Suggestion",
+        "Suggestions",
         1
       );
 
@@ -1344,7 +1324,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<Texts> ScrapeTaglinesPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.Taglines.Description(),
+        "Taglines",
         1
       );
 
@@ -1367,7 +1347,7 @@ namespace tar.IMDbScraper.Base {
     public static async Task<TechnicalPage?> ScrapeTechnicalPageAsync(string imdbID) {
       ProgressLog progressLog = StartProgress(
         imdbID,
-        Page.Technical.Description(),
+        "Technical Page",
         1
       );
 

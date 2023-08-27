@@ -2,8 +2,6 @@
 
  - [X] C# .NET Standard v2.1
 
-![IMDbExporter](https://raw.githubusercontent.com/tardezyx/tar.IMDbScraper/main/Images/IMDbExporter.png)
-
 ## Function
 
 This library can be used to scrape various IMDb title information via the static `Scraper` class:
@@ -98,3 +96,5 @@ It is recommended to not scrape all information at once and it also does not mak
   <li>In order to receive progress information during the scraping you can register the events Scraper.Updated and/or IMDbTitle.Updated. The complete log is stored in Scraper.ProgressLog.</li>
   <li>For detailed usage, see <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> and the tar.IMDbExporter.zip file provided next to some releases.</li>
 </ul>
+
+![IMDbExporter](https://raw.githubusercontent.com/tardezyx/tar.IMDbScraper/main/Images/IMDbExporter.png)

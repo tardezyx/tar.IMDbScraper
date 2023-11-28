@@ -62,6 +62,10 @@ namespace tar.IMDbScraper.Base {
       if (DateTime.TryParse(input, out DateTime result)) {
         return result;
       }
+      
+      if (input.Length == 4) {
+        return GetDateTimeByDMY("1", "1", input);
+      }
 
       return null;
     }

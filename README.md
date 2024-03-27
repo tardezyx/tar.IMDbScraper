@@ -9,7 +9,6 @@ This library can be used to scrape various IMDb title information via the static
 <details>
   <summary>via AJAX</summary>
   <ul>
-    <li>all seasons</li>
     <li>all user reviews</li>
   </ul>
 </details>
@@ -56,6 +55,7 @@ This library can be used to scrape various IMDb title information via the static
   <li>all plot summaries</li>
   <li>all quotes</li>
   <li>all release dates</li>
+  <li>all seasons</li>
   <li>all topics</li>
   <li>all trivia entries</li>
   <li>episodes card (2 top ranked and 2 most recent episodes, if available)</li>

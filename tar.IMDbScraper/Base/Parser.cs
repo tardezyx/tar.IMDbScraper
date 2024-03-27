@@ -9,7 +9,7 @@ using tar.IMDbScraper.Extensions;
 using tar.IMDbScraper.Models;
 
 namespace tar.IMDbScraper.Base {
-  internal static class Parser {
+	internal static class Parser {
     #region --- add company to company credits list -----------------------------------------------
     private static void AddCompanyToCompanyCreditsList(List<Company> companies, Company company) {
       Company existing = companies.FirstOrDefault(x => x.ID == company.ID);
@@ -36,7 +36,7 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- get content data from html script -------------------------------------------------
-    private static JsonNode? GetContentDataFromHTMLScript(HtmlDocument? htmlDocument) {
+    internal static JsonNode? GetContentDataFromHTMLScript(HtmlDocument? htmlDocument) {
       if (htmlDocument == null) {
         return null;
       }
@@ -3139,123 +3139,85 @@ namespace tar.IMDbScraper.Base {
     internal static Seasons ParseSeasons(List<HtmlDocument> htmlDocuments) {
       Seasons result = new Seasons();
 
-      int season = 1;
+			int season = 0;
       foreach (HtmlDocument htmlDocument in htmlDocuments) {
-        string? name = htmlDocument
-          .DocumentNode
-          .SelectSingleNode("//h3[@itemprop=\"name\"]")?
-          .InnerText
-          .Replace("&nbsp;", " ")
-          .Trim();
+				#region --- determine season number -------------------------------------------------------
+				season++;
+				HtmlNode? linkNode = htmlDocument?
+					.DocumentNode
+					.SelectSingleNode("//link[@rel=\"canonical\"]");
 
-        IEnumerable<HtmlNode>? list = htmlDocument
-          .DocumentNode
-          .Descendants("div")
-          .Where(x => x.Attributes["class"] != null
-                   && x.Attributes["class"].Value.StartsWith("list_item")
-        );
+				if (linkNode != null) {
+					int? actualSeason = Helper.GetInt(
+						linkNode
+							.Attributes["href"]
+							.Value
+							.GetSubstringAfterString("?season=")
+					);
 
-        Episodes episodes = new Episodes();
-        foreach (HtmlNode node in list.EmptyIfNull()) {
-          int? episodeNumber = Helper.GetInt(
-            node
-            .Descendants("meta")
-            .FirstOrDefault()?
-            .Attributes["content"].Value
-          );
+					if (actualSeason.HasValue) {
+						season = actualSeason.Value;
+					}
+				}
+				#endregion
+				#region --- parse episodes ----------------------------------------------------------------
+				int? yearFrom = null;
+				int? yearTo = null;
 
-          string? id = node
-            .Descendants("a")
-            .FirstOrDefault(x => x.Attributes["itemprop"]?
-                                  .Value == "name")?
-            .Attributes["href"]?
-            .Value
-            .GetSubstringBetweenStrings("/title/", "/?");
-          
-          string? imageURL = Helper.GetImageURL(
-            node
-            .Descendants("img")
-            .FirstOrDefault()?
-            .Attributes["src"]?
-            .Value
-          );
-          
-          string? originalTitle = node
-            .Descendants("a")
-            .FirstOrDefault(x => x.Attributes["itemprop"]?
-                                  .Value == "name")?
-            .InnerText
-            .Trim();
+				JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+					["section"]?
+					["episodes"]?
+					["items"]?
+					.AsArray();
 
-          string? plot = node
-            .Descendants("div")
-            .FirstOrDefault(x => x.Attributes["class"]?
-                                  .Value == "item_description")?
-            .InnerText
-            .Replace("\n", string.Empty)
-            .GetWithMergedWhitespace();
+				Episodes episodes = new Episodes();
+				foreach (JsonNode? node in jsonArray.EmptyIfNull()) {
+					string? episodeNumber						= node?["episode"]?.ToString();
+					string? episodeId								= node?["id"]?.ToString();
+					string? episodeImageUrl					= node?["image"]?["url"]?.ToString();
+					string? episodeOriginalTitle		= node?["titleText"]?.ToString();
+					string? episodePlot							= node?["plot"]?.ToString();
+					string? episodeRatingValue			= node?["aggregateRating"]?.ToString(); // double
+					string? episodeRatingVotes			= node?["voteCount"]?.ToString();				// int
+					string? episodeReleaseDateDay		= node?["releaseDate"]?["day"]?.ToString();
+					string? episodeReleaseDateMonth	= node?["releaseDate"]?["month"]?.ToString();
+					string? episodeReleaseDateYear	= node?["releaseDate"]?["year"]?.ToString();
+					string? episodeSeasonNumber			= node?["season"]?.ToString();
+					
+					int? year = Helper.GetInt(episodeReleaseDateYear);
+					if (year.HasValue) {
+						if (yearFrom == null || yearFrom > year) {
+							yearFrom = year;
+						}
 
-          Rating? rating = Helper.GetRating(
-            node.Descendants("span")
-                .FirstOrDefault(x => x.Attributes["class"]?
-                                      .Value == "ipl-rating-star__rating")?
-                .InnerText,
-            node.Descendants("span")
-                .FirstOrDefault(x => x.Attributes["class"]?
-                                      .Value == "ipl-rating-star__total-votes")?
-                .InnerText
-                .Replace("(", string.Empty)
-                .Replace(")", string.Empty)
-                .Replace(".", string.Empty)
-          );
+						if (yearTo == null || yearTo < year) {
+							yearTo = year;
+						}
+					}
 
-          DateTime? releaseDate = Helper.GetDateTime(
-            node.Descendants("div")
-                .FirstOrDefault(x => x.Attributes["class"]?
-                                      .Value == "airdate")?
-                .InnerText
-                .Trim()
-          );
-
-          if (episodeNumber > 0 || id.HasText()) {
+					if (episodeNumber.HasText()) {
             episodes.Add(new Episode() {
-              EpisodeNumber  = episodeNumber,
-              ID             = id,
-              ImageURL       = imageURL,
-              OriginalTitle  = originalTitle,
-              Plot           = plot,
-              Rating         = rating,
-              ReleaseDate    = releaseDate,
-              SeasonNumber   = season,
-              URL            = Helper.GetUrl(id, IdCategory.Title)
+              EpisodeNumber  = Helper.GetInt(episodeNumber),
+              ID             = episodeId,
+              ImageURL       = Helper.GetImageURL(episodeImageUrl),
+              OriginalTitle  = episodeOriginalTitle,
+              Plot           = episodePlot,
+              Rating         = Helper.GetRating(episodeRatingValue, episodeRatingVotes),
+              ReleaseDate    = Helper.GetDateTimeByDMY(episodeReleaseDateDay, episodeReleaseDateMonth, episodeReleaseDateYear),
+              SeasonNumber   = Helper.GetInt(episodeSeasonNumber),
+              URL            = Helper.GetUrl(episodeId, IdCategory.Title)
             });
           }
-        }
-        
-        if (name.HasText() || episodes.Count > 0) {
-          int? yearFrom = null;
-          int? yearTo   = null;
-          foreach (Episode episode in episodes) {
-            if (episode.ReleaseDate.HasValue) {
-              if (yearFrom == null || yearFrom > episode.ReleaseDate.Value.Year) {
-                yearFrom = episode.ReleaseDate.Value.Year;
-              }
-              if (yearTo == null || yearTo < episode.ReleaseDate.Value.Year) {
-                yearTo = episode.ReleaseDate.Value.Year;
-              }
-            }
-          }
+				}
+				#endregion
 
-          result.Add(new Season() {
-            Episodes = episodes,
-            Name     = name,
-            YearFrom = yearFrom,
-            YearTo   = yearTo
-          });
-        }
-
-        season++;
-      }
+				result.Add(new Season() {
+					Episodes	= episodes,
+					Name			= $"Season {season}",
+					YearFrom	= yearFrom,
+					YearTo		= yearTo
+				});
+			}
 
       return result;
     }

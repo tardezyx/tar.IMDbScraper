@@ -1,4 +1,35 @@
-﻿/// page               ajax         html               json
+﻿/* IMPORTANT: You need update Base/Dict.cs manually and regularly if a query does not work anymore:
+ * ================================================================================================
+ * OperationQueryHashes		1. open corresponding site listed below with firefox, click f12 to show the web dev tools window
+ *												2. go to network analysis and sort by Host
+ *												3. on the site click on "More..." on the corresponding item
+ *												4. in web dev tools window: check new entry for Host "caching.graphql.imdb.com"
+ *												5. copy the value from header lines -> GET -> extensions -> sha256Hash to Base/Dict.cs
+ * ------------------------------------------------------------------------------------------------
+ * AllAwardsEvents				https://www.imdb.com/event/all/														(no click necessary)
+ * AllTopics							https://www.imdb.com/title/tt0068646/keywords/						(no click necessary)
+ * AlternateTitles				https://www.imdb.com/title/tt0068646/releaseinfo/
+ * Awards									https://www.imdb.com/title/tt0068646/awards/
+ * CompanyCredits					https://www.imdb.com/title/tt0068646/companycredits/
+ * Connections						https://www.imdb.com/title/tt0068646/movieconnections/
+ * EpisodesCard						https://www.imdb.com/title/tt0072562/											(no click necessary)
+ * ExternalReviews				https://www.imdb.com/title/tt0068646/externalreviews/
+ * ExternalSites					https://www.imdb.com/title/tt0068646/externalsites/
+ * FilmingDates						https://www.imdb.com/title/tt0944947/locations/
+ * FilmingLocations				https://www.imdb.com/title/tt0068646/locations/
+ * Goofs									https://www.imdb.com/title/tt0068646/goofs/
+ * Keywords								https://www.imdb.com/title/tt0068646/keywords/
+ * MainNews								https://www.imdb.com/title/tt0072562/											(scroll down)
+ * News										https://www.imdb.com/title/tt0072562/news/
+ * NextEpisode						https://www.imdb.com/title/tt0072562/											(no click necessary)
+ * PlotSummaries					https://www.imdb.com/title/tt4154796/plotsummary/
+ * Quotes									https://www.imdb.com/title/tt0068646/quotes/
+ * ReleaseDates						https://www.imdb.com/title/tt0068646/releaseinfo/
+ * Storyline							https://www.imdb.com/title/tt0072562/											(scroll down)
+ * Trivia									https://www.imdb.com/title/tt0068646/trivia/
+ */
+
+/// page               ajax         html               json
 /// -----------------------------------------------------------------------------------------------
 /// alternateversions               get json script
 /// awards                          get event ids      for each event id

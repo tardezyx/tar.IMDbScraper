@@ -5,7 +5,7 @@ using tar.IMDbScraper.Enums;
 using tar.IMDbScraper.Models;
 
 namespace tar.IMDbScraper.UnitTests {
-  [TestClass]
+	[TestClass]
   public class TestTitle {
     #region --- all alternate titles --------------------------------------------------------------
     [TestMethod]

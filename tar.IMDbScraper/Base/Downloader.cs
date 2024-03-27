@@ -9,7 +9,7 @@ using tar.IMDbScraper.Enums;
 using tar.IMDbScraper.Extensions;
 
 namespace tar.IMDbScraper.Base {
-  internal static class Downloader {
+	internal static class Downloader {
     #region --- fields ----------------------------------------------------------------------------
     private readonly static List<SourceAjax> _SourcesAjax = new List<SourceAjax>();
     private readonly static List<SourceHtml> _SourcesHtml = new List<SourceHtml>();
@@ -316,6 +316,69 @@ namespace tar.IMDbScraper.Base {
         progressLogStep,
         1,
         1
+      );
+
+      return result;
+    }
+    #endregion
+		#region --- download html seasons ------------------------------------------------- (async) ---
+    internal static async Task<List<HtmlDocument>> DownloadHtmlSeasonsAsync(
+      ProgressLog progressLog,
+      string      imdbID
+    ) {
+      List<HtmlDocument> result = new List<HtmlDocument>();
+
+      ProgressLogStep progressLogStep = Scraper.StartProgressStep(
+        progressLog,
+        "HTML request",
+        "Seasons",
+        1
+      );
+
+      int actualSeason = 1;
+      int lastSeason   = 1;
+      while (actualSeason <= lastSeason) {
+        HtmlDocument? seasonDocument = await DownloadAjaxAsync(
+          imdbID,
+          $"episodes/?season={actualSeason}"
+        );
+
+        if (seasonDocument == null) {
+          break;
+        }
+
+        if (actualSeason == 1) {
+					JsonNode? lastSeasonNode = Parser.GetContentDataFromHTMLScript(seasonDocument)?
+						["section"]?
+						["seasons"]?
+						.AsArray()?
+						.LastOrDefault();
+
+					if (lastSeasonNode != null) {
+						int? season = Helper.GetInt(lastSeasonNode?["value"]?.ToString());
+						if (season.HasValue) {
+							lastSeason = season.Value;
+						}
+					}
+        }
+
+        result.Add(seasonDocument);
+
+        progressLogStep = Scraper.UpdateProgressStep(
+          progressLog,
+          progressLogStep,
+          actualSeason,
+          lastSeason
+        );
+
+        actualSeason++;
+      }
+
+      _ = Scraper.UpdateProgressStep(
+        progressLog,
+        progressLogStep,
+        actualSeason,
+        actualSeason
       );
 
       return result;

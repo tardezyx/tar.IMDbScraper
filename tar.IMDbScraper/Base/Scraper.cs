@@ -9,12 +9,12 @@ using tar.IMDbScraper.Extensions;
 using tar.IMDbScraper.Models;
 
 namespace tar.IMDbScraper.Base {
-  /// <summary>
-  /// The scraper class provides all methods which can be used for scraping. To receive detailed
-  /// progress information during the scraping, register the event <see cref="Updated"/>.
-  /// All title relevant scraping is capsuled within the class <see cref="IMDbTitle"/>.
-  /// </summary>
-  public static class Scraper {
+	/// <summary>
+	/// The scraper class provides all methods which can be used for scraping. To receive detailed
+	/// progress information during the scraping, register the event <see cref="Updated"/>.
+	/// All title relevant scraping is capsuled within the class <see cref="IMDbTitle"/>.
+	/// </summary>
+	public static class Scraper {
     #region --- events ----------------------------------------------------------------------------
     /// <summary>
     /// An event which is triggered on every progress update during the scraping.
@@ -658,7 +658,7 @@ namespace tar.IMDbScraper.Base {
     #region --- scrape all seasons ---------------------------------------------------- (async) ---
     /// <summary>
     /// Scrapes all seasons of an IMDb title.
-    /// <br><b>Caution:</b> Requires one AJAX request for each season.</br>
+    /// <br><b>Caution:</b> Requires one HTML request for each season.</br>
     /// </summary>
     /// <param name="imdbID">The ID of an IMDb title.</param>
     /// <returns>All seasons.</returns>
@@ -670,7 +670,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseSeasons(
-        await Downloader.DownloadAjaxSeasonsAsync(
+        await Downloader.DownloadHtmlSeasonsAsync(
           progressLog,
           imdbID
         )

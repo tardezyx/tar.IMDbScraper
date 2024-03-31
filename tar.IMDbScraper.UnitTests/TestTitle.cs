@@ -5,7 +5,7 @@ using tar.IMDbScraper.Enums;
 using tar.IMDbScraper.Models;
 
 namespace tar.IMDbScraper.UnitTests {
-	[TestClass]
+  [TestClass]
   public class TestTitle {
     #region --- all alternate titles --------------------------------------------------------------
     [TestMethod]
@@ -289,6 +289,24 @@ namespace tar.IMDbScraper.UnitTests {
     }
     #endregion
 
+		#region --- hashes ----------------------------------------------------------------------------
+    [TestMethod]
+    public async Task Hashes() {
+      /* important: to update the hashes you can use the following method
+       * - you can adjust the default path to the .json file which stores the hashes
+       *   (use an absolute path, e.g. @"D:\MyFolder\MySubFolder\MyFancyJsonFile.json")
+       * - you can use a comparison DateTime parameter
+       *   (e.g. use DateTime.Now.AddDays(-30) to update the hashes every month)
+       */
+
+			var hashes = await Scraper.ScrapeAllOperationHashesAsync(@"d:\_1.json");
+
+      Assert.IsTrue(
+        hashes != null,
+        "Hashes could not be scraped!"
+      );
+    }
+    #endregion
     #region --- suggestions -----------------------------------------------------------------------
     [TestMethod]
     public async Task Suggestions() {
@@ -402,10 +420,10 @@ namespace tar.IMDbScraper.UnitTests {
 
       // movies
       //string imdbID = "tt0017136";  // metropolis
-      string imdbID = "tt0068646";  // the godfather
+      //string imdbID = "tt0068646";  // the godfather
       //string imdbID = "tt0078748";  // alien
       //string imdbID = "tt0108052";  // schindler's list
-      //string imdbID = "tt0133093";  // the matrix
+      string imdbID = "tt0133093";  // the matrix
       //string imdbID = "tt0387564";  // saw
       //string imdbID = "tt0468569";  // the dark knight
       //string imdbID = "tt4154796";  // avengers: endgame
@@ -425,24 +443,24 @@ namespace tar.IMDbScraper.UnitTests {
       //string imdbID = "tt11198330"; // house of the dragon
       //string imdbID = "tt13966962"; // echo (unreleased)
 
-      AlternateTitles   allAlternateTitles  = await Scraper.ScrapeAllAlternateTitles(imdbID);
-      Awards            allAwards           = await Scraper.ScrapeAllAwardsAsync(imdbID);
-      AllCompanies?     allCompanies        = await Scraper.ScrapeAllCompaniesAsync(imdbID);
-      AllConnections?   allConnections      = await Scraper.ScrapeAllConnectionsAsync(imdbID);
-      ExternalLinks     allExternalReviews  = await Scraper.ScrapeAllExternalReviewsAsync(imdbID);
-      AllExternalLinks? allExternalSites    = await Scraper.ScrapeAllExternalSitesAsync(imdbID);
-      FilmingDates      allFilmingDates     = await Scraper.ScrapeAllFilmingDatesAsync(imdbID);
-      FilmingLocations  allFilmingLocations = await Scraper.ScrapeAllFilmingLocationsAsync(imdbID);
-      AllGoofs?         allGoofs            = await Scraper.ScrapeAllGoofsAsync(imdbID);
-      Keywords          allKeywords         = await Scraper.ScrapeAllKeywordsAsync(imdbID);
-      PlotSummaries     allPlotSummaries    = await Scraper.ScrapeAllPlotSummariesAsync(imdbID); // check avengers: endgame
-      Quotes            allQuotes           = await Scraper.ScrapeAllQuotesAsync(imdbID);
-      ReleaseDates      allReleaseDates     = await Scraper.ScrapeAllReleaseDatesAsync(imdbID);
-      Seasons           allSeasons          = await Scraper.ScrapeAllSeasonsAsync(imdbID);
-      AllTopics?        allTopics           = await Scraper.ScrapeAllTopicsAsync(imdbID);
-      TriviaEntries     allTriviaEntries    = await Scraper.ScrapeAllTriviaEntriesAsync(imdbID);
-      NewsEntries       newest500News       = await Scraper.ScrapeAllNewsAsync(imdbID, 2);
-      UserReviews       newest75UserReviews = await Scraper.ScrapeAllUserReviewsAsync(imdbID, 3);
+      //AlternateTitles   allAlternateTitles  = await Scraper.ScrapeAllAlternateTitles(imdbID);
+      //Awards            allAwards           = await Scraper.ScrapeAllAwardsAsync(imdbID);
+      //AllCompanies?     allCompanies        = await Scraper.ScrapeAllCompaniesAsync(imdbID);
+      //AllConnections?   allConnections      = await Scraper.ScrapeAllConnectionsAsync(imdbID);
+      //ExternalLinks     allExternalReviews  = await Scraper.ScrapeAllExternalReviewsAsync(imdbID);
+      //AllExternalLinks? allExternalSites    = await Scraper.ScrapeAllExternalSitesAsync(imdbID);
+      //FilmingDates      allFilmingDates     = await Scraper.ScrapeAllFilmingDatesAsync(imdbID);
+      //FilmingLocations  allFilmingLocations = await Scraper.ScrapeAllFilmingLocationsAsync(imdbID);
+      //AllGoofs?         allGoofs            = await Scraper.ScrapeAllGoofsAsync(imdbID);
+      //Keywords          allKeywords         = await Scraper.ScrapeAllKeywordsAsync(imdbID);
+      //PlotSummaries     allPlotSummaries    = await Scraper.ScrapeAllPlotSummariesAsync(imdbID); // check avengers: endgame
+      //Quotes            allQuotes           = await Scraper.ScrapeAllQuotesAsync(imdbID);
+      //ReleaseDates      allReleaseDates     = await Scraper.ScrapeAllReleaseDatesAsync(imdbID);
+      //Seasons           allSeasons          = await Scraper.ScrapeAllSeasonsAsync(imdbID);
+      //AllTopics?        allTopics           = await Scraper.ScrapeAllTopicsAsync(imdbID);
+      //TriviaEntries     allTriviaEntries    = await Scraper.ScrapeAllTriviaEntriesAsync(imdbID);
+      //NewsEntries       newest500News       = await Scraper.ScrapeAllNewsAsync(imdbID, 2);
+      //UserReviews       newest75UserReviews = await Scraper.ScrapeAllUserReviewsAsync(imdbID, 3);
 
       // Caution: some of the following methods provide incomplete data!
       // ------------------------------------------------------------------------------------------

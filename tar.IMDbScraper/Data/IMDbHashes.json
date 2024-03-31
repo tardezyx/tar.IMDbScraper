@@ -1,0 +1,107 @@
+[
+  {
+    "Hash": "415acfd016d0efdcd7c6372567c658a8342073ecd5e7a0c3605675e57b1f3826",
+    "LastUpdate": "2024-03-31T00:58:14.1151291+01:00",
+    "Operation": "AllAwardsEvents"
+  },
+  {
+    "Hash": "c785ac26e6953fffd64ec51122016e24883e3e705a5077c3684d45e1c956cf2a",
+    "LastUpdate": "2024-03-31T00:58:21.8871009+01:00",
+    "Operation": "AllTopics"
+  },
+  {
+    "Hash": "48d4f7bfa73230fb550147bd4704d8050080e65fe2ad576da6276cac2330e446",
+    "LastUpdate": "2024-03-31T00:58:51.0032809+01:00",
+    "Operation": "AlternateTitles"
+  },
+  {
+    "Hash": "8b4946d86888821ee8c8624d40c14e1cb6a0c8bf01179d186359e20bb0945da3",
+    "LastUpdate": "2024-03-31T00:59:11.0922526+01:00",
+    "Operation": "Awards"
+  },
+  {
+    "Hash": "832e9b62579c7063ba988e1d3dfaf340dcdfeedf9cb5abab2ef8317e297b0d4f",
+    "LastUpdate": "2024-03-31T00:58:24.6804597+01:00",
+    "Operation": "CompanyCredits"
+  },
+  {
+    "Hash": "aa8c01ab5c901746e2e3f3e5584e4a285b2070150f20016b9fa328ca1f41693a",
+    "LastUpdate": "2024-03-31T00:58:40.2584379+01:00",
+    "Operation": "Connections"
+  },
+  {
+    "Hash": "6bd40b628b93068238a0a9def6cea8de9d977434873527596cd05820315e4051",
+    "LastUpdate": "2024-03-31T00:59:26.4333311+01:00",
+    "Operation": "EpisodesCard"
+  },
+  {
+    "Hash": "bad722da8056f89fc82f22539f98454ce6ad8acf6b9886ceedb0176260de8ca7",
+    "LastUpdate": "2024-03-31T00:58:29.4459732+01:00",
+    "Operation": "ExternalReviews"
+  },
+  {
+    "Hash": "3e3bbe4b0cad017b90f4b2ea6f4552aa7608b7cd062d64bc71a013d160d77c94",
+    "LastUpdate": "2024-03-31T00:58:33.2159965+01:00",
+    "Operation": "ExternalSites"
+  },
+  {
+    "Hash": "fa9a01e2b97bb6c17446864be6d68326bded774b8e1103471242bdbe941c2170",
+    "LastUpdate": "2024-03-31T00:59:41.9398057+01:00",
+    "Operation": "FilmingDates"
+  },
+  {
+    "Hash": "9f2ac963d99baf72b7a108de141901f4caa8c03af2e1a08dfade64db843eff7b",
+    "LastUpdate": "2024-03-31T00:59:36.5775833+01:00",
+    "Operation": "FilmingLocations"
+  },
+  {
+    "Hash": "167fca1ae43e3c27d931bc04b5732878e57cddc990c01ba89092f8f4d4ff1e5c",
+    "LastUpdate": "2024-03-31T00:59:00.758992+01:00",
+    "Operation": "Goofs"
+  },
+  {
+    "Hash": "04628cd376a392eba1e6fc0aad7070fe78e10018dc59b159924bf0026a1450de",
+    "LastUpdate": "2024-03-31T00:58:20.62804+01:00",
+    "Operation": "Keywords"
+  },
+  {
+    "Hash": "c6ae3925308b305c385a8dc73ed30de36b3a93edc6427ca5dc73c05669a0b3aa",
+    "LastUpdate": "2024-03-31T00:59:27.7690155+01:00",
+    "Operation": "MainNews"
+  },
+  {
+    "Hash": "248f31f13e6150bcddc01a2511b4500dadac10db7aa333356b84c28cf69d1ee2",
+    "LastUpdate": "2024-03-31T00:59:33.0113601+01:00",
+    "Operation": "News"
+  },
+  {
+    "Hash": "b63cb31312b392f3f06785459e8b5db6e39f97217c9108d1af4fc6b5519cc73b",
+    "LastUpdate": "2024-03-31T00:59:26.4331725+01:00",
+    "Operation": "NextEpisode"
+  },
+  {
+    "Hash": "293710f82443e7d470c8ef746b715d6569a5d4954faa0f79531c0d16bd41b760",
+    "LastUpdate": "2024-03-31T00:59:45.9412194+01:00",
+    "Operation": "PlotSummaries"
+  },
+  {
+    "Hash": "692c18ce2502d42ab6fc2ebc60f53b133bc9e8fbf23f09d8826cca0b2770ca8a",
+    "LastUpdate": "2024-03-31T00:59:21.81408+01:00",
+    "Operation": "Quotes"
+  },
+  {
+    "Hash": "0e4e6468b8bc55114f80551e7a062301c78999ee538789a936902e4ab5239ccd",
+    "LastUpdate": "2024-03-31T00:58:49.4697571+01:00",
+    "Operation": "ReleaseDates"
+  },
+  {
+    "Hash": "8693f4655e3e7c5b6f786c6cf30e72dfa63a8fd52ebbad6f3a5ef7f03431c0f1",
+    "LastUpdate": "2024-03-31T00:59:27.6264755+01:00",
+    "Operation": "Storyline"
+  },
+  {
+    "Hash": "dcd2869ed0fcb95ac64f3e7c5a42038c5ee73c76a7b53d7a6fbc003ae4dd09ea",
+    "LastUpdate": "2024-03-31T00:58:56.8955951+01:00",
+    "Operation": "Trivia"
+  }
+]

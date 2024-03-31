@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 
 namespace tar.IMDbScraper.Enums {
-  internal enum Operation {
+	public enum Operation {
     [Description("AllEventsPage")]                       AllAwardsEvents, // https://www.imdb.com/event/all/
     [Description("TitleAllTopics")]                      AllTopics,       // https://www.imdb.com/title/tt.../
     [Description("TitleAkasPaginated")]                  AlternateTitles, // https://www.imdb.com/title/tt.../releaseinfo

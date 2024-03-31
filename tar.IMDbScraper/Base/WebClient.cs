@@ -122,7 +122,7 @@ namespace tar.IMDbScraper.Base {
     #endregion
 
     #region --- get html -------------------------------------------------------------- (async) ---
-    internal static async Task<HtmlDocument?> GetHTMLAsync(string url) {
+    internal static async Task<HtmlDocument?> GetHtmlAsync(string url) {
       string content = await SendViaGetAsync(url);
 
       if (string.IsNullOrEmpty(content)) {
@@ -136,7 +136,7 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- get json -------------------------------------------------------------- (async) ---
-    internal static async Task<JsonNode?> GetJSONAsync(string url) {
+    internal static async Task<JsonNode?> GetJsonAsync(string url) {
       string content = await SendViaGetAsync(url);
 
       if (string.IsNullOrEmpty(content)) {

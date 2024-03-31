@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 using tar.IMDbScraper.Extensions;
 using tar.IMDbScraper.Models;
@@ -32,8 +35,8 @@ namespace tar.IMDbScraper.Base {
     public event Action<IMDbTitleProgress> Updated = _ => { };
     #endregion
     #region --- fields ----------------------------------------------------------------------------
-    private int _CurrentStep;
-    private int _Steps;
+    private int _currentStep;
+    private int _steps;
     #endregion
     #region --- properties ------------------------------------------------------------------------
     public AlternateTitles    AlternateTitles   { get; set; } = new AlternateTitles();
@@ -81,17 +84,22 @@ namespace tar.IMDbScraper.Base {
     /// </summary>
     /// <returns></returns>
     public string GetJson() {
-      JsonSerializerOptions jsonOptions = new JsonSerializerOptions() {
+			TextEncoderSettings encoderSettings = new TextEncoderSettings();
+			encoderSettings.AllowRange(UnicodeRanges.All);
+
+      JsonSerializerOptions options = new JsonSerializerOptions() {
+        Converters = { new JsonStringEnumConverter() },
+				Encoder = JavaScriptEncoder.Create(encoderSettings),
         TypeInfoResolver = new DefaultJsonTypeInfoResolver()
           .Exclude(
             typeof(IMDbTitle),
             nameof(Settings)
           ),
         PropertyNameCaseInsensitive = true,
-        WriteIndented = true
-      };
+				WriteIndented = true
+			};
 
-      return JsonSerializer.Serialize(this, jsonOptions);
+      return JsonSerializer.Serialize(this, options);
     }
     #endregion
     #region --- scrape ----------------------------------------------------------------------------
@@ -100,9 +108,9 @@ namespace tar.IMDbScraper.Base {
     /// </summary>
     /// <returns></returns>
     public async Task ScrapeAsync() {
-      _CurrentStep = 0;
+      _currentStep = 0;
 
-      _Steps = Settings
+      _steps = Settings
         .GetType()
         .GetProperties()
         .Where(x => x.PropertyType == typeof(Boolean))
@@ -151,12 +159,12 @@ namespace tar.IMDbScraper.Base {
     #endregion
     #region --- scraper: updated ------------------------------------------------------------------
     private void Scraper_Updated(ProgressLog progressLog) {
-      double singleStepProgress    = 100.00 / _Steps;
-      double finishedStepsProgress = _CurrentStep * singleStepProgress;
+      double singleStepProgress    = 100.00 / _steps;
+      double finishedStepsProgress = _currentStep * singleStepProgress;
       double currentStepProgress   = progressLog.Progress * singleStepProgress / 100;
 
       IMDbTitleProgress iMDbTitleProgress = new IMDbTitleProgress() {
-        Description = $"{_CurrentStep}/{_Steps}: {progressLog.Description} ({progressLog.FinishedSteps}/{progressLog.TotalSteps})"
+        Description = $"{_currentStep}/{_steps}: {progressLog.Description} ({progressLog.FinishedSteps}/{progressLog.TotalSteps})"
           + (progressLog.CurrentStepDescription.Length > 0
             ? $": {progressLog.CurrentStepDescription}"
             : string.Empty),
@@ -168,9 +176,9 @@ namespace tar.IMDbScraper.Base {
       };
 
       if (progressLog.FinishedSteps == progressLog.TotalSteps) {
-        _CurrentStep++;
+        _currentStep++;
 
-        if (_CurrentStep == _Steps) {
+        if (_currentStep == _steps) {
           iMDbTitleProgress.Value = 100;
         }
       }

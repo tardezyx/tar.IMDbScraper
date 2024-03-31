@@ -9,12 +9,12 @@ using tar.IMDbScraper.Extensions;
 using tar.IMDbScraper.Models;
 
 namespace tar.IMDbScraper.Base {
-	/// <summary>
-	/// The scraper class provides all methods which can be used for scraping. To receive detailed
-	/// progress information during the scraping, register the event <see cref="Updated"/>.
-	/// All title relevant scraping is capsuled within the class <see cref="IMDbTitle"/>.
-	/// </summary>
-	public static class Scraper {
+  /// <summary>
+  /// The scraper class provides all methods which can be used for scraping. To receive detailed
+  /// progress information during the scraping, register the event <see cref="Updated"/>.
+  /// All title relevant scraping is capsuled within the class <see cref="IMDbTitle"/>.
+  /// </summary>
+  public static class Scraper {
     #region --- events ----------------------------------------------------------------------------
     /// <summary>
     /// An event which is triggered on every progress update during the scraping.
@@ -155,7 +155,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseAlternateTitles(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.AlternateTitles
@@ -180,7 +180,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       List<AwardsEvent>? relevantAwardsEvents = Parser.ParseAwardsPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.Awards
@@ -196,7 +196,7 @@ namespace tar.IMDbScraper.Base {
       foreach (AwardsEvent awardsEvent in relevantAwardsEvents.Where(x => x.ID != null)) {
         if (awardsEvent.ID != null) {
           result.AddRange(Parser.ParseAwards(
-            await Downloader.DownloadJSONAsync(
+            await Downloader.DownloadJsonAsync(
               progressLog,
               imdbID,
               Operation.Awards,
@@ -226,7 +226,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseAwardsEvents(await
-        Downloader.DownloadJSONAsync(
+        Downloader.DownloadJsonAsync(
           progressLog,
           string.Empty,
           Operation.AllAwardsEvents
@@ -272,7 +272,7 @@ namespace tar.IMDbScraper.Base {
     #region --- scrape all companies (sub) -------------------------------------------- (async) ---
     private static async Task<Companies> ScrapeAllCompaniesSubAsync(ProgressLog progressLog, string imdbID, CompanyCategory category) {
       return Parser.ParseCompanies(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.CompanyCredits,
@@ -342,7 +342,7 @@ namespace tar.IMDbScraper.Base {
     #region --- scrape all connections (sub) ------------------------------------------ (async) ---
     private static async Task<Connections> ScrapeAllConnectionsSubAsync(ProgressLog progressLog, string imdbID, ConnectionsCategory category) {
       return Parser.ParseConnections(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Connections,
@@ -366,7 +366,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseExternalLinks(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.ExternalReviews
@@ -412,7 +412,7 @@ namespace tar.IMDbScraper.Base {
     #region --- scrape all external sites (sub) --------------------------------------- (async) ---
     private static async Task<ExternalLinks> ScrapeAllExternalSitesSubAsync(ProgressLog progressLog, string imdbID, ExternalSitesCategory category) {
       return Parser.ParseExternalLinks(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.ExternalSites,
@@ -436,7 +436,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseFilmingDates(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.FilmingDates
@@ -458,7 +458,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseFilmingLocations(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.FilmingLocations
@@ -521,13 +521,13 @@ namespace tar.IMDbScraper.Base {
     #region --- scrape all goofs (sub) ------------------------------------------------ (async) ---
     private static async Task<Goofs> ScrapeAllGoofsSubAsync(ProgressLog progressLog, string imdbID, GoofsCategory category) {
       return Parser.ParseGoofs(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Goofs,
           $"{category.Description()}|false"
         ),
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Goofs,
@@ -551,7 +551,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseKeywords(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Keywords
@@ -579,7 +579,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseNewsList(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.News,
@@ -587,6 +587,39 @@ namespace tar.IMDbScraper.Base {
           maxRequests
         )
       );
+    }
+    #endregion
+    #region --- scrape all operational hashes ----------------------------------------- (async) ---
+    /// <summary>
+    /// Scrapes a list of all hashes which are used on IMDb. All hashes will be scraped if not existing or if older than the <paramref name="compareDateTime"/>. When updated, the hashes are stored to a .json file. You can adjust this via <paramref name="path"/>.
+    /// <br><b>Caution:</b> Opens a simulated Chrome Browser window which surfs various IMDb pages for around 90 seconds. Just wait until it is automatically closed.</br>
+    /// </summary>
+    /// <param name="path">The absolute path to the .json file which contains the IMDb hashes. Default value is '[AppPath]\Data\IMDbHashes.json'.</param>
+    /// <param name="compareDateTime">The DateTime for the update check. Default value is a week ago.</param>
+    /// <returns>A list of all hashes.</returns>
+    public static async Task<AllOperationHashes?> ScrapeAllOperationHashesAsync(string? path = null, DateTime? compareDateTime = null) {
+      ProgressLog progressLog = StartProgress(
+        string.Empty,
+        "Load All Hashes",
+        1
+      );
+
+      if (path.HasText()) {
+        Downloader.SetPathToHashFile(path);
+      }
+
+      if (compareDateTime == null) {
+        compareDateTime = DateTime.Now.AddDays(-7);
+      }
+
+      AllOperationHashes? result = await Downloader.GetAllOperationHashesAsync();
+
+      if (result == null || result.MapToList().FirstOrDefault(x => x.LastUpdate < compareDateTime) != null) {
+        await Downloader.UpdateOperationHashesAsync();
+        result = await Downloader.GetAllOperationHashesAsync();
+      }
+
+      return result;
     }
     #endregion
     #region --- scrape all plot summaries --------------------------------------------- (async) ---
@@ -603,7 +636,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParsePlotSummaries(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.PlotSummaries
@@ -625,7 +658,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseQuotes(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Quotes
@@ -647,7 +680,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseReleaseDates(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.ReleaseDates
@@ -691,7 +724,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseAllTopics(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.AllTopics
@@ -713,13 +746,13 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseTriviaEntries(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Trivia,
           "false"
         ),
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Trivia,
@@ -771,7 +804,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseAlternateVersionsPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.AlternateVersions
@@ -795,7 +828,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseAwards(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Awards,
@@ -821,7 +854,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseAwards(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Awards,
@@ -847,7 +880,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseAwardsPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.Awards
@@ -870,7 +903,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseCompanies(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.CompanyCredits,
@@ -895,7 +928,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseConnections(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Connections,
@@ -920,7 +953,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseCrazyCreditsPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.CrazyCredits
@@ -943,7 +976,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseCriticReviewsPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.CriticReviews
@@ -965,7 +998,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseEpisodeCard(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.EpisodesCard
@@ -988,7 +1021,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseExternalLinks(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.ExternalSites,
@@ -1013,7 +1046,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseFAQPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.FAQ
@@ -1036,7 +1069,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseFullCreditsPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.FullCredits
@@ -1059,13 +1092,13 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseGoofs(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Goofs,
           $"{category.Description()}|false"
         ),
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Goofs,
@@ -1092,7 +1125,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseLocationsPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.Locations
@@ -1115,7 +1148,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseNewsList(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.MainNews
@@ -1138,7 +1171,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseMainPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.Main
@@ -1159,7 +1192,7 @@ namespace tar.IMDbScraper.Base {
         1
       );
 
-      List<JsonNode>? nodes = await Downloader.DownloadJSONAsync(
+      List<JsonNode>? nodes = await Downloader.DownloadJsonAsync(
         progressLog,
         imdbID,
         Operation.NextEpisode
@@ -1189,7 +1222,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseParentalGuidePage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.ParentalGuide
@@ -1212,7 +1245,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseRatingsPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.Ratings
@@ -1236,7 +1269,7 @@ namespace tar.IMDbScraper.Base {
 
       return Parser.ParseReferencePage(
         imdbID,
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.Reference
@@ -1259,7 +1292,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseSoundtrackPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.Soundtrack
@@ -1281,7 +1314,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseStoryline(
-        await Downloader.DownloadJSONAsync(
+        await Downloader.DownloadJsonAsync(
           progressLog,
           imdbID,
           Operation.Storyline
@@ -1305,7 +1338,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseSuggestions(
-        await Downloader.DownloadJSONSuggestionAsync(
+        await Downloader.DownloadJsonSuggestionAsync(
           progressLog,
           input,
           category,
@@ -1329,7 +1362,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseTaglinesPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.Taglines
@@ -1352,7 +1385,7 @@ namespace tar.IMDbScraper.Base {
       );
 
       return Parser.ParseTechnicalPage(
-        await Downloader.DownloadHTMLAsync(
+        await Downloader.DownloadHtmlAsync(
           progressLog,
           imdbID,
           Page.Technical

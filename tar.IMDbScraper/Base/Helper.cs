@@ -10,7 +10,7 @@ using tar.IMDbScraper.Models;
 namespace tar.IMDbScraper.Base {
   internal static class Helper {
     #region --- adjust html -----------------------------------------------------------------------
-    internal static string? AdjustHTML(string? input) {
+    internal static string? AdjustHtml(string? input) {
       if (input == null) {
         return null;
       }
@@ -105,7 +105,7 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- get image url ---------------------------------------------------------------------
-    internal static string? GetImageURL(string? input) {
+    internal static string? GetImageUrl(string? input) {
       if (input.IsNullOrEmpty()) {
         return null;
       }
@@ -191,7 +191,7 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- get text from html ----------------------------------------------------------------
-    internal static string? GetTextFromHTML(string? input) {
+    internal static string? GetTextFromHtml(string? input) {
       if (input == null) {
         return null;
       }
@@ -220,8 +220,8 @@ namespace tar.IMDbScraper.Base {
       }
 
       return new Text() { 
-        HtmlText  = AdjustHTML(htmlText),
-        PlainText = GetTextFromHTML(AdjustHTML(htmlText))
+        HtmlText  = AdjustHtml(htmlText),
+        PlainText = GetTextFromHtml(AdjustHtml(htmlText))
       };
     }
     #endregion

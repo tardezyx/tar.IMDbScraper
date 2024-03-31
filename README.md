@@ -88,6 +88,43 @@ For results, see <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/
 
 It is recommended to not scrape all information at once and it also does not make any sense to store everything in your own database which could not only be a legal issue but is also immediately outdated as the IMDb data is updated regularly. Therefore, you should only scrape and store general information (e.g. title(s), year(s), genre(s), plot(s)) and scrape the other info when you really need (to display) it. This is also due to the duration a particular scrape needs (e.g. it takes already around 42 seconds to scrape all 37 seasons of "The Simpsons" without detailed information of each episode).
 
+## Hashes
+
+IMDb regularly changes the hashes which are used for most of the requests. Use <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper/Base/Scraper.cs#L600">Scraper.ScrapeAllOperationHashesAsync()</a> once in a while which automatically updates the hashes via a simulated browser window and stores those in a local .json file. You can adjust the default path ('[PathToTheYourApp]\Data\IMDbHashes.json') and the DateTime to compare the last update with.
+
+Furthermore, you can also adjust the .json file manually as follows:
+<ol>
+  <li>Open the corresponding site listed below with Firefox, click F12 to show the Web Dev Tools window
+  <li>Go to Network Analysis and sort by Host
+  <li>On the site, click on "More..." below the corresponding items
+  <li>In Web Dev Tools window: check new entry for File starting with "/?operationName=" to find the corresponding operation
+  <li>Copy the value from Header Lines -> GET -> extensions -> sha256Hash to the .json file</li>
+</ol>
+
+Operation | GET-Operation-Name | Page | How to retrieve
+--- | --- | --- | ---
+AllAwardsEvents | AllEventsPage | https://www.imdb.com/event/all/ | no click necessary
+AllTopics | TitleAllTopics | https://www.imdb.com/title/tt0068646/keywords/ | no click necessary
+AlternateTitles | TitleAkasPaginated | https://www.imdb.com/title/tt0068646/releaseinfo/ | click on "More"
+Awards | TitleAwardsSubPagePagination | https://www.imdb.com/title/tt0068646/awards/ | click on "More"
+CompanyCredits | TitleCompanyCreditsPagination | https://www.imdb.com/title/tt0068646/companycredits/ | click on "More"
+Connections | TitleConnectionsSubPagePagination | https://www.imdb.com/title/tt0068646/movieconnections/ | click on "More"
+EpisodesCard | TMD_Episodes_EpisodesCardContainer | https://www.imdb.com/title/tt0072562/ | no click necessary
+ExternalReviews | TitleExternalReviewsPagination | https://www.imdb.com/title/tt0068646/externalreviews/ | click on "More"
+ExternalSites | TitleExternalSitesSubPagePagination | https://www.imdb.com/title/tt0068646/externalsites/ | click on "More"
+FilmingDates | TitleFilmingDatesPaginated | https://www.imdb.com/title/tt0944947/locations/ | click on "More"
+FilmingLocations | TitleFilmingLocationsPaginated | https://www.imdb.com/title/tt0068646/locations/ | click on "More"
+Goofs | TitleGoofsPagination | https://www.imdb.com/title/tt0068646/goofs/ | click on "More"
+Keywords | TitleKeywordsPagination | https://www.imdb.com/title/tt0068646/keywords/ | click on "More"
+MainNews | TitleMainNews | https://www.imdb.com/title/tt0072562/ | only scroll down
+News | TitleNewsPagination | https://www.imdb.com/title/tt0072562/news/ | click on "More"
+NextEpisode | TMD_Episodes_NextEpisode | https://www.imdb.com/title/tt0072562/ | no click necessary
+PlotSummaries |TitlePlotSummariesPaginated | https://www.imdb.com/title/tt4154796/plotsummary/ | click on "More"
+Quotes | TitleQuotesPagination | https://www.imdb.com/title/tt0068646/quotes/ | click on "More"
+ReleaseDates | TitleReleaseDatesPaginated | https://www.imdb.com/title/tt0068646/releaseinfo/ | click on "More"
+Storyline | TMD_Storyline | https://www.imdb.com/title/tt0072562/ | only scroll down
+Trivia | TitleTriviaPagination | https://www.imdb.com/title/tt0068646/trivia/ | click on "More"
+
 ## Usage
 
 <ul>

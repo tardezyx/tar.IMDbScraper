@@ -9,7 +9,7 @@ using tar.IMDbScraper.Extensions;
 using tar.IMDbScraper.Models;
 
 namespace tar.IMDbScraper.Base {
-	internal static class Parser {
+  internal static class Parser {
     #region --- add company to company credits list -----------------------------------------------
     private static void AddCompanyToCompanyCreditsList(List<Company> companies, Company company) {
       Company existing = companies.FirstOrDefault(x => x.ID == company.ID);
@@ -36,7 +36,7 @@ namespace tar.IMDbScraper.Base {
     }
     #endregion
     #region --- get content data from html script -------------------------------------------------
-    internal static JsonNode? GetContentDataFromHTMLScript(HtmlDocument? htmlDocument) {
+    internal static JsonNode? GetContentDataFromHtmlScript(HtmlDocument? htmlDocument) {
       if (htmlDocument == null) {
         return null;
       }
@@ -57,7 +57,7 @@ namespace tar.IMDbScraper.Base {
     #endregion    
     #region --- parse actor -----------------------------------------------------------------------
     private static Person ParseActor(HtmlNode node) {
-      string? imageURL = Helper.GetImageURL(
+      string? imageURL = Helper.GetImageUrl(
         node
         .Descendants("img")
         .FirstOrDefault()?
@@ -88,7 +88,7 @@ namespace tar.IMDbScraper.Base {
           .InnerText
           .Trim();
 
-        notesText = Helper.GetTextFromHTML(
+        notesText = Helper.GetTextFromHtml(
           node
           .Descendants("td")
           .FirstOrDefault(x => x.Attributes["class"]?
@@ -122,7 +122,7 @@ namespace tar.IMDbScraper.Base {
           .FirstOrDefault(x => x.Attributes["class"]?
                                 .Value == "character");
 
-        notesText = Helper.GetTextFromHTML(
+        notesText = Helper.GetTextFromHtml(
           tdCharacter?
           .InnerText
           .Replace("\n", string.Empty)
@@ -198,7 +198,7 @@ namespace tar.IMDbScraper.Base {
       }
 
       string? id         = node?["id"]?.ToString();
-      string? textAsHtml = Helper.AdjustHTML(node?["htmlContent"]?.ToString());
+      string? textAsHtml = Helper.AdjustHtml(node?["htmlContent"]?.ToString());
 
       if (id.HasText() || textAsHtml.HasText()) {
         return new AlternateVersion() {
@@ -268,7 +268,7 @@ namespace tar.IMDbScraper.Base {
       bool?   isWinner   = Helper.GetBool(node?["isWinner"]?.ToString());
       string? name       = node?["award"]?["text"]?.ToString();
       Persons persons    = ParsePersons(node?["awardedEntities"]?["secondaryAwardNames"]?.AsArray());
-      string? textAsHtml = Helper.AdjustHTML(node?["award"]?["notes"]?["plaidHtml"]?.ToString());
+      string? textAsHtml = Helper.AdjustHtml(node?["award"]?["notes"]?["plaidHtml"]?.ToString());
       string? url        = Helper.GetUrl(awardsEvents, IdCategory.AwardsEvent);
       int?    year       = Helper.GetInt(node?["award"]?["eventEdition"]?["year"]?.ToString());
 
@@ -386,7 +386,7 @@ namespace tar.IMDbScraper.Base {
       }
 
       AssociatedTitle? associatedTitle = ParseAssociatedTitle(node?["associatedTitle"]);
-      string?          notesAsHtml = Helper.AdjustHTML(node?["description"]?["plaidHtml"]?.ToString());
+      string?          notesAsHtml = Helper.AdjustHtml(node?["description"]?["plaidHtml"]?.ToString());
 
       if (associatedTitle != null) { 
         return new Connection() {
@@ -427,7 +427,7 @@ namespace tar.IMDbScraper.Base {
 
       string? id         = node?["id"]?.ToString();
       int?    downVotes  = Helper.GetInt(node?["userVotingProps"]?["downVotes"]?.ToString().Replace(".", string.Empty));
-      string? textAsHtml = Helper.AdjustHTML(node?["cardHtml"]?.ToString());
+      string? textAsHtml = Helper.AdjustHtml(node?["cardHtml"]?.ToString());
       int?    upVotes    = Helper.GetInt(node?["userVotingProps"]?["upVotes"]?.ToString().Replace(".", string.Empty));
 
       if (id.HasText() || textAsHtml.HasText()) {
@@ -607,7 +607,7 @@ namespace tar.IMDbScraper.Base {
 
       string?        id            = node?["id"]?.ToString();
       InterestScore? interestScore = ParseInterestScore(node?["interestScore"]);
-      string?        textAsHtml    = Helper.AdjustHTML(node?["text"]?["plaidHtml"]?.ToString());
+      string?        textAsHtml    = Helper.AdjustHtml(node?["text"]?["plaidHtml"]?.ToString());
 
       if (id.HasText() || interestScore != null || textAsHtml.HasText()) {
         bool isSpoiler = true;
@@ -709,10 +709,10 @@ namespace tar.IMDbScraper.Base {
       string?   by         = node?["byline"]?.ToString();
       DateTime? date       = Helper.GetDateTime(node?["date"]?.ToString());
       string?   id         = node?["id"]?.ToString();
-      string?   imageURL   = Helper.GetImageURL(node?["image"]?["url"]?.ToString());
+      string?   imageURL   = Helper.GetImageUrl(node?["image"]?["url"]?.ToString());
       string?   source     = node?["source"]?["homepage"]?["label"]?.ToString();
       string?   sourceURL  = node?["externalUrl"]?.ToString();
-      string?   textAsHtml = Helper.AdjustHTML(node?["text"]?["plaidHtml"]?.ToString());
+      string?   textAsHtml = Helper.AdjustHtml(node?["text"]?["plaidHtml"]?.ToString());
       string?   title      = node?["articleTitle"]?["plainText"]?.ToString();
 
       if (by.HasText() || id.HasText() || imageURL.HasText() || source.HasText()
@@ -802,7 +802,7 @@ namespace tar.IMDbScraper.Base {
                         .Contains("vote"));
 
         foreach (HtmlNode li in list.EmptyIfNull()) {
-          string? textAsHtml = Helper.AdjustHTML(
+          string? textAsHtml = Helper.AdjustHtml(
             li
             .InnerHtml
             .GetWithReplacedSubstrings("<div class=\"ipl-hideable-container", "</div>", string.Empty)
@@ -831,7 +831,7 @@ namespace tar.IMDbScraper.Base {
                         .Contains("vote"));
 
         foreach (HtmlNode li in list.EmptyIfNull()) {
-          string? textAsHtml = Helper.AdjustHTML(
+          string? textAsHtml = Helper.AdjustHtml(
             li
             .InnerHtml
             .GetWithReplacedSubstrings("<div class=\"ipl-hideable-container", "</div>", string.Empty)
@@ -864,7 +864,7 @@ namespace tar.IMDbScraper.Base {
       }
 
       string? id       = node?["id"]?.ToString();
-      string? imageURL = Helper.GetImageURL(node?["primaryImage"]?["url"]?.ToString());
+      string? imageURL = Helper.GetImageUrl(node?["primaryImage"]?["url"]?.ToString());
       string? name     = node?["nameText"]?["text"]?.ToString();
 
       if (id.HasText() || imageURL.HasText() || name.HasText()) {
@@ -901,7 +901,7 @@ namespace tar.IMDbScraper.Base {
 
       string? author     = node?["author"]?.ToString();
       string? id         = node?["id"]?.ToString();
-      string? textAsHtml = Helper.AdjustHTML(node?["plotText"]?["plaidHtml"]?.ToString());
+      string? textAsHtml = Helper.AdjustHtml(node?["plotText"]?["plaidHtml"]?.ToString());
 
       if (author.HasText() || id.HasText() || textAsHtml.HasText()) {
         return new PlotSummary() {
@@ -924,7 +924,7 @@ namespace tar.IMDbScraper.Base {
 
       string?        id            = node?["id"]?.ToString();
       InterestScore? interestScore = ParseInterestScore(node?["interestScore"]);
-      string?        textAsHtml    = Helper.AdjustHTML(node?["displayableArticle"]?["body"]?["plaidHtml"]?.ToString());
+      string?        textAsHtml    = Helper.AdjustHtml(node?["displayableArticle"]?["body"]?["plaidHtml"]?.ToString());
 
       if (id.HasText() || interestScore != null || textAsHtml.HasText()) {
         return new Quote() {
@@ -984,7 +984,7 @@ namespace tar.IMDbScraper.Base {
 
         result.Add(new SuggestionVideo() {
           ID       = id,
-          ImageURL = Helper.GetImageURL(node?["i"]?["imageUrl"]?.ToString()),
+          ImageURL = Helper.GetImageUrl(node?["i"]?["imageUrl"]?.ToString()),
           Name     = node?["l"]?.ToString(),
           Runtime  = Helper.GetTimeSpan(runtimeHours, runtimeMinutes, runtimeSeconds),
           URL      = Helper.GetUrl(id, IdCategory.Video)
@@ -1002,7 +1002,7 @@ namespace tar.IMDbScraper.Base {
 
       string?        id            = node?["id"]?.ToString();
       InterestScore? interestScore = ParseInterestScore(node?["interestScore"]);
-      string?        textAsHtml    = Helper.AdjustHTML(node?["displayableArticle"]?["body"]?["plaidHtml"]?.ToString());
+      string?        textAsHtml    = Helper.AdjustHtml(node?["displayableArticle"]?["body"]?["plaidHtml"]?.ToString());
 
       if (id.HasText() || interestScore != null || textAsHtml.HasText()) {
         bool isSpoiler = true;
@@ -1106,7 +1106,7 @@ namespace tar.IMDbScraper.Base {
       foreach (JsonNode node in nodes.EmptyIfNull()) {
         if (node?["titleText"]?["text"]?.ToString() != null) {
           return new AllTopics() {
-            ImageURL                  = Helper.GetImageURL(node?["primaryImage"]?["url"]?.ToString()),
+            ImageURL                  = Helper.GetImageUrl(node?["primaryImage"]?["url"]?.ToString()),
             LocalizedTitle            = node?["titleText"]?["text"]?.ToString(),
             NumberOfAlternateTitles   = Helper.GetInt(node?["subNavAkas"]?["total"]?.ToString()),
             NumberOfAlternateVersions = Helper.GetInt(node?["subNavAlternateVersions"]?["total"]?.ToString()),
@@ -1164,7 +1164,7 @@ namespace tar.IMDbScraper.Base {
     internal static AlternateVersions ParseAlternateVersionsPage(HtmlDocument? htmlDocument) {
       AlternateVersions result = new AlternateVersions();
 
-      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHtmlScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
@@ -1289,7 +1289,7 @@ namespace tar.IMDbScraper.Base {
     internal static CrazyCredits ParseCrazyCreditsPage(HtmlDocument? htmlDocument) {
       CrazyCredits result = new CrazyCredits();
 
-      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHtmlScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
@@ -1308,7 +1308,7 @@ namespace tar.IMDbScraper.Base {
     internal static CriticReviews ParseCriticReviewsPage(HtmlDocument? htmlDocument) {
       CriticReviews result = new CriticReviews();
 
-      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHtmlScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
@@ -1331,7 +1331,7 @@ namespace tar.IMDbScraper.Base {
 
       int?      episodeNumber  = Helper.GetInt(node?["series"]?["episodeNumber"]?["episodeNumber"]?.ToString());
       string?   id             = node?["id"]?.ToString();
-      string?   imageURL       = Helper.GetImageURL(node?["primaryImage"]?["url"]?.ToString());
+      string?   imageURL       = Helper.GetImageUrl(node?["primaryImage"]?["url"]?.ToString());
       string?   localizedTitle = node?["titleText"]?["text"]?.ToString();
       string?   originalTitle  = node?["originalTitleText"]?["text"]?.ToString();
       string?   plot           = node?["plot"]?["plotText"]?["plainText"]?.ToString();
@@ -1404,7 +1404,7 @@ namespace tar.IMDbScraper.Base {
       FAQEntries noSpoilers = new FAQEntries();
       FAQEntries spoilers   = new FAQEntries();
 
-      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHtmlScript(htmlDocument)?
         ["categories"]?
         .AsArray();
 
@@ -1640,7 +1640,7 @@ namespace tar.IMDbScraper.Base {
       FilmingLocations filmingLocations = new FilmingLocations();
       ProductionDates  productionDates  = new ProductionDates();
 
-      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHtmlScript(htmlDocument)?
         ["categories"]?
         .AsArray();
 
@@ -1799,7 +1799,7 @@ namespace tar.IMDbScraper.Base {
       int?      awardsWins        = Helper.GetInt(nodeMain?["wins"]?["total"]?.ToString());
       string?   certificate       = nodeAbove?["certificate"]?["rating"]?.ToString();
       string?   id                = nodeMain?["id"]?.ToString();
-      string?   imageURL          = Helper.GetImageURL(nodeAbove?["primaryImage"]?["url"]?.ToString());
+      string?   imageURL          = Helper.GetImageUrl(nodeAbove?["primaryImage"]?["url"]?.ToString());
       bool?     isEpisode         = Helper.GetBool(nodeAbove?["titleType"]?["isEpisode"]?.ToString());
       bool?     isSeries          = Helper.GetBool(nodeAbove?["titleType"]?["isSeries"]?.ToString());
       string?   localizedTitle    = nodeMain?["titleText"]?["text"]?.ToString();
@@ -1881,7 +1881,7 @@ namespace tar.IMDbScraper.Base {
 
         foreach (JsonNode? node in nodeCast.EmptyIfNull()) {
           string? actorID       = node?["node"]?["name"]?["id"]?.ToString();
-          string? actorImageURL = Helper.GetImageURL(node?["node"]?["name"]?["primaryImage"]?["url"]?.ToString());
+          string? actorImageURL = Helper.GetImageUrl(node?["node"]?["name"]?["primaryImage"]?["url"]?.ToString());
           string? actorName     = node?["node"]?["name"]?["nameText"]?["text"]?.ToString();
 
           JsonArray? nodeActorCharacters = node?["node"]?["characters"]?.AsArray();
@@ -2054,7 +2054,7 @@ namespace tar.IMDbScraper.Base {
       foreach (JsonNode? node in nodeSimilarTitles.EmptyIfNull()) {
         string? similarTitleCertificate      = node?["node"]?["certificate"]?["rating"]?.ToString();
         string? similarTitleID               = node?["node"]?["id"]?.ToString();
-        string? similarTitleImageURL         = Helper.GetImageURL(node?["node"]?["primaryImage"]?["url"]?.ToString());
+        string? similarTitleImageURL         = Helper.GetImageUrl(node?["node"]?["primaryImage"]?["url"]?.ToString());
         string? similarTitleLocalizedTitle   = node?["node"]?["titleText"]?["text"]?.ToString();
         string? similarTitleOriginalTitle    = node?["node"]?["originalTitleText"]?["text"]?.ToString();
         string? similarTitleRuntimeInSeconds = node?["node"]?["runtime"]?["seconds"]?.ToString();
@@ -2177,7 +2177,7 @@ namespace tar.IMDbScraper.Base {
       Videos videos = new Videos();
       foreach (JsonNode? node in nodeVideos.EmptyIfNull()) {
         string? videoID               = node?["node"]?["id"]?.ToString();
-        string? videoImageURL         = Helper.GetImageURL(node?["node"]?["thumbnail"]?["url"]?.ToString());
+        string? videoImageURL         = Helper.GetImageUrl(node?["node"]?["thumbnail"]?["url"]?.ToString());
         string? videoName             = node?["node"]?["name"]?["value"]?.ToString().Trim();
         string? videoRuntimeInSeconds = node?["node"]?["runtime"]?["value"]?.ToString();
         string? videoType             = node?["node"]?["contentType"]?["displayName"]?["value"]?.ToString();
@@ -2367,7 +2367,7 @@ namespace tar.IMDbScraper.Base {
     #endregion
     #region --- parse ratings page ----------------------------------------------------------------
     internal static RatingsPage? ParseRatingsPage(HtmlDocument? htmlDocument) {
-      JsonNode? root = GetContentDataFromHTMLScript(htmlDocument)?["histogramData"];
+      JsonNode? root = GetContentDataFromHtmlScript(htmlDocument)?["histogramData"];
 
       JsonArray? nodeHistogram = root?["histogramValues"]?.AsArray();
       Ratings histogram = new Ratings();
@@ -2440,7 +2440,7 @@ namespace tar.IMDbScraper.Base {
       HtmlNode? headerNode = rootNode?
         .SelectSingleNode("//div[@class=\"titlereference-header\"]");
 
-      string? imageURL = Helper.GetImageURL(
+      string? imageURL = Helper.GetImageUrl(
         headerNode?
         .SelectSingleNode("//img[@class=\"titlereference-primary-image\"]")?
         .Attributes["src"]?
@@ -3164,7 +3164,7 @@ namespace tar.IMDbScraper.Base {
 				int? yearFrom = null;
 				int? yearTo = null;
 
-				JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+				JsonArray? jsonArray = GetContentDataFromHtmlScript(htmlDocument)?
 					["section"]?
 					["episodes"]?
 					["items"]?
@@ -3199,7 +3199,7 @@ namespace tar.IMDbScraper.Base {
             episodes.Add(new Episode() {
               EpisodeNumber  = Helper.GetInt(episodeNumber),
               ID             = episodeId,
-              ImageURL       = Helper.GetImageURL(episodeImageUrl),
+              ImageURL       = Helper.GetImageUrl(episodeImageUrl),
               OriginalTitle  = episodeOriginalTitle,
               Plot           = episodePlot,
               Rating         = Helper.GetRating(episodeRatingValue, episodeRatingVotes),
@@ -3226,7 +3226,7 @@ namespace tar.IMDbScraper.Base {
     internal static Songs ParseSoundtrackPage(HtmlDocument? htmlDocument) {
       Songs result = new Songs();
 
-      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHtmlScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
@@ -3238,7 +3238,7 @@ namespace tar.IMDbScraper.Base {
 
         JsonArray? list = node?["listContent"]?.AsArray();
         foreach (JsonNode? noteNode in list.EmptyIfNull()) {
-          string? textAsHtml = Helper.AdjustHTML(noteNode?["html"]?.ToString());
+          string? textAsHtml = Helper.AdjustHtml(noteNode?["html"]?.ToString());
           Text?   text       = Helper.GetTextViaHtmlText(textAsHtml);
 
           if (text != null) {
@@ -3307,7 +3307,7 @@ namespace tar.IMDbScraper.Base {
         }
 
         if (path.Contains("outlines")) {
-          string? outlineAsHtml = Helper.AdjustHTML(node?["plotText"]?["plaidHtml"]?.ToString());
+          string? outlineAsHtml = Helper.AdjustHtml(node?["plotText"]?["plaidHtml"]?.ToString());
 
           if (outlineAsHtml.HasText()) {
             plotSummaries.Add(new PlotSummary() {
@@ -3319,7 +3319,7 @@ namespace tar.IMDbScraper.Base {
 
         if (path.Contains("summaries")) {
           string? summaryAuthor     = node?["author"]?.ToString();
-          string? summaryTextAsHtml = Helper.AdjustHTML(node?["plotText"]?["plaidHtml"]?.ToString());
+          string? summaryTextAsHtml = Helper.AdjustHtml(node?["plotText"]?["plaidHtml"]?.ToString());
 
           if (summaryAuthor.HasText() || summaryTextAsHtml.HasText()) {
             plotSummaries.Add(new PlotSummary() {
@@ -3331,7 +3331,7 @@ namespace tar.IMDbScraper.Base {
         }
 
         if (path.Contains("synopses")) {
-          string? synopsisAsHtml = Helper.AdjustHTML(node?["plotText"]?["plaidHtml"]?.ToString());
+          string? synopsisAsHtml = Helper.AdjustHtml(node?["plotText"]?["plaidHtml"]?.ToString());
 
           if (synopsisAsHtml.HasText()) {
             plotSummaries.Add(new PlotSummary() {
@@ -3372,7 +3372,7 @@ namespace tar.IMDbScraper.Base {
 
         result.Add(new Suggestion() {
           ID       = id,
-          ImageURL = Helper.GetImageURL(node["i"]?["imageUrl"]?.ToString()),
+          ImageURL = Helper.GetImageUrl(node["i"]?["imageUrl"]?.ToString()),
           Name     = node["l"]?.ToString(),
           Notes    = node["s"]?.ToString(),
           Rank     = Helper.GetInt(node["rank"]?.ToString()),
@@ -3392,13 +3392,13 @@ namespace tar.IMDbScraper.Base {
     internal static Texts ParseTaglinesPage(HtmlDocument? htmlDocument) {
       Texts result = new Texts();
 
-      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHtmlScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
 
       foreach (JsonNode? node in jsonArray.EmptyIfNull()) {
-        string? textAsHtml = Helper.AdjustHTML(node?["htmlContent"]?.ToString());
+        string? textAsHtml = Helper.AdjustHtml(node?["htmlContent"]?.ToString());
         Text?   text       = Helper.GetTextViaHtmlText(textAsHtml);
 
         if (text != null) {
@@ -3426,7 +3426,7 @@ namespace tar.IMDbScraper.Base {
       TechnicalEntries runtimes                 = new TechnicalEntries();
       TechnicalEntries soundMixes               = new TechnicalEntries();
 
-      JsonArray? jsonArray = GetContentDataFromHTMLScript(htmlDocument)?
+      JsonArray? jsonArray = GetContentDataFromHtmlScript(htmlDocument)?
         ["section"]?
         ["items"]?
         .AsArray();
@@ -3600,7 +3600,7 @@ namespace tar.IMDbScraper.Base {
                 .FirstOrDefault()?
                 .InnerText);
 
-          string? textAsHtml = Helper.AdjustHTML(
+          string? textAsHtml = Helper.AdjustHtml(
             node.Descendants("div")
                 .FirstOrDefault(x => x.Attributes["class"]?
                                       .Value == "text show-more__control")?

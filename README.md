@@ -90,7 +90,7 @@ It is recommended to not scrape all information at once and it also does not mak
 
 ## Hashes
 
-IMDb regularly changes the hashes which are used for most of the requests. Use <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper/Base/Scraper.cs#L600">Scraper.ScrapeAllOperationHashesAsync()</a> once in a while which automatically updates the hashes via a simulated browser window and stores those in a local .json file. You can adjust the default path ('[PathToTheYourApp]\Data\IMDbHashes.json') and the DateTime to compare the last update with.
+IMDb regularly changes the hashes which are used for most of the requests. Use <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper/Base/Scraper.cs#L600">Scraper.ScrapeAllOperationHashesAsync()</a> once in a while which automatically updates the hashes via a simulated browser window and stores those in a local .json file. You can adjust the default path `[PathToYourApp]\Data\IMDbHashes.json` and the DateTime to compare the last update with.
 
 Furthermore, you can also adjust the .json file manually as follows:
 <ol>
@@ -98,7 +98,7 @@ Furthermore, you can also adjust the .json file manually as follows:
   <li>Go to Network Analysis and sort by Host
   <li>On the site, click on "More..." below the corresponding items
   <li>In Web Dev Tools window: check new entry for File starting with "/?operationName=" to find the corresponding operation
-  <li>Copy the value from Header Lines -> GET -> extensions -> sha256Hash to the .json file</li>
+  <li>Copy the value from `Header Lines` -> `GET` -> `extensions` -> `sha256Hash` to the .json file</li>
 </ol>
 
 Operation | GET-Operation-Name | Page | How to retrieve
@@ -129,9 +129,17 @@ Trivia | TitleTriviaPagination | https://www.imdb.com/title/tt0068646/trivia/ | 
 
 <ul>
   <li>NuGet: use tar.IMDbScraper.x.x.x.nupkg</li>
-  <li>Manual: reference tar.IMDbScraper.dll, <a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a> (v1.11.48+) and <a href="https://www.nuget.org/packages/System.Text.Json/">System.Text.Json</a> (v7.0.3+)</li>
-  <li>In order to receive progress information during the scraping you can register the events Scraper.Updated and/or IMDbTitle.Updated. The complete log is stored in Scraper.ProgressLog.</li>
-  <li>For detailed usage, see <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> and the tar.IMDbExporter.zip file provided next to some releases.</li>
+  <li>Manual: reference the following
+    <ul>
+      <li>tar.IMDbScraper.dll</li>
+      <li><a href="https://www.nuget.org/packages/HtmlAgilityPack">HtmlAgilityPack</a> (v1.11.48+)</li>
+      <li><a href="https://www.nuget.org/packages/Selenium.WebDriver/">Selenium.WebDriver</a> (v4.19.0+)</li>
+      <li><a href="https://www.nuget.org/packages/Selenium.WebDriver.ChromeDriver/">Selenium.WebDriver.ChromeDriver</a> (v123.0.6312.8600+)</li>
+      <li><a href="https://www.nuget.org/packages/System.Text.Json/">System.Text.Json</a> (v7.0.3+)</li>
+    </ul>
+  </li>
+  <li>In order to receive progress information during the scraping you can register the events `Scraper.Updated` and/or `IMDbTitle.Updated`. The complete log is stored in `Scraper.ProgressLog`.</li>
+  <li>For detailed usage, see <a href="https://github.com/tardezyx/tar.IMDbScraper/blob/main/tar.IMDbScraper.UnitTests/TestTitle.cs">UnitTests</a> and the <a href="https://github.com/tardezyx/tar.IMDbExporter/">tar.IMDbExporter</a> project.</li>
 </ul>
 
 ![IMDbExporter](https://raw.githubusercontent.com/tardezyx/tar.IMDbScraper/main/Images/IMDbExporter.png)
